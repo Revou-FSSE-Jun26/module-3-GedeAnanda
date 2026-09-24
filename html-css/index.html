@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nanda | Software Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <link rel="stylesheet" href="style.css">
+  <body>
+    <header class="site-header">
+      <a href="#top" class="logo">Nanda Bela</a>
+      <nav aria-label="Main navigation">
+        <ul class="nav-list">
+          <li><a href="#about">About</a></li>
+          <li><a href="#skills">Skills</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="top">
+      <!-- about me -->
+      <section id="about" class="about">
+        <h1>I Gede Ananda Bela Persada</h1>
+
+        <p class="tagline">
+          Software engineer passionate about building reliable and scalable
+          applications.
+        </p>
+
+        <p>
+          Informatics Engineering student at Telkom University with a focus on
+          software engineering, backend development, and mobile applications.
+          Currently building projects and sharpening my skills through hands-on
+          experience and software engineering training.
+        </p>
+      </section>
+
+      <!-- skills -->
+      <section id="skills" class="skills">
+        <h2>Skills</h2>
+        <ul class="skills-grid">
+          <li>Node.js &amp; Express</li>
+          <li>Go &amp; Gin</li>
+          <li>PostgreSQL</li>
+          <li>Prisma ORM</li>
+          <li>REST API design</li>
+          <li>Git &amp; GitHub</li>
+        </ul>
+      </section>
+
+      <section id="projects" class="projects">
+        <h2>Projects</h2>
+        <div class="project-list">
+          <article class="project">
+            <h3>RevoShop API</h3>
+            <p>Backend for an online shop, built for RevoU Module 2.</p>
+          </article>
+
+          <article class="project">
+            <h3>Olahin</h3>
+            <p>
+              Node.js + Prisma backend for a smart recipe app, built with GDGoC.
+            </p>
+          </article>
+
+          <article class="project">
+            <h3>PuzzleCam</h3>
+            <p>
+              Photobooth web app controlled with hand gestures, with a puzzle
+              mechanic.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="contact" class="contact">
+        <h2>Contact me</h2>
+
+        <form class="contact-form" action="#" method="post">
+          <div class="form-field">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              autocomplete="name"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              autocomplete="email"
+              required
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="phone">Phone (optional)</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" />
+          </div>
+
+          <div class="form-field">
+            <label for="topic">Topic</label>
+            <select id="topic" name="topic">
+              <option value="project">Project collaboration</option>
+              <option value="job">Job opportunity</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+
+          <div class="form-field full-width">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+          </div>
+
+          <button type="submit">Send message</button>
+        </form>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>&copy; 2026 Nanda. Built with plain HTML and CSS.</p>
+    </footer>
+  </body>
+</html>
