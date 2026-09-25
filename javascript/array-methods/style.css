@@ -1,0 +1,223 @@
+:root {
+  --color-bg: #f5f7f6;
+  --color-surface: #ffffff;
+  --color-text: #1c2b2a;
+  --color-muted: #5a6b69;
+  --color-accent: #0e7c6b;
+  --color-border: #d5dedc;
+  --radius: 6px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  line-height: 1.6;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+
+/* ---------- Layout ---------- */
+.app {
+  width: min(100% - 3rem, 760px);
+  margin: 3rem auto;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+.subtitle {
+  margin: 0.25rem 0 2rem;
+  color: var(--color-muted);
+}
+
+section + section {
+  margin-top: 2.5rem;
+}
+
+.method-note {
+  margin: 0.125rem 0 1rem;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+code {
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background-color: #e3ece9;
+  color: var(--color-accent);
+  font-size: 0.85em;
+}
+
+
+/* ---------- Filter controls ---------- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.control label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+select {
+  min-width: 12rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: inherit;
+  font: inherit;
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-block: 0.6rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.checkbox input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-accent);
+}
+
+
+/* ---------- Summary cards ---------- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));  /* minmax(0, ...) supaya kolom nggak melebar karena isi */
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.stat {
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.stat dt {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.stat dd {
+  margin: 0;
+  font-size: clamp(1rem, 4vw, 1.25rem);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+
+/* ---------- Table ---------- */
+.table-wrapper {
+  overflow-x: auto;   /* tabel bisa di-scroll sendiri di layar sempit */
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--color-border);
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;   /* angka sama lebar, jadi rapi sejajar */
+}
+
+/* Class ini di-toggle dari JS */
+tr.sold-out td {
+  color: var(--color-muted);
+}
+
+.empty-state {
+  color: var(--color-muted);
+}
+
+
+/* ---------- Category breakdown ---------- */
+.breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.breakdown li {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: var(--color-surface);
+  font-weight: 600;
+}
+
+.breakdown span {
+  color: var(--color-accent);
+}
+
+
+/* ---------- Breakpoint ---------- */
+@media (min-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
