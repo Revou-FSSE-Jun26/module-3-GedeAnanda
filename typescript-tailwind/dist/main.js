@@ -1,5 +1,5 @@
 import { products } from "./data.js";
-// ---------- DOM ----------
+// ambil elemen DOM
 function getElement(selector) {
     const element = document.querySelector(selector);
     if (!element) {
@@ -14,8 +14,7 @@ const emptyState = getElement("#empty-state");
 const emptyQuery = getElement("#empty-query");
 const cartCount = getElement("#cart-count");
 const cartTotal = getElement("#cart-total");
-// ---------- Typed data -> Tailwind classes ----------
-// Class ditulis lengkap biar Tailwind bisa nemu pas scan file
+// warna badge dari data, class ditulis lengkap biar kebaca Tailwind
 const categoryBadgeClass = {
     Electronics: "bg-sky-100 text-sky-800",
     Fashion: "bg-pink-100 text-pink-800",
@@ -31,7 +30,7 @@ const stockLabel = {
     "low-stock": "Low stock",
     "out-of-stock": "Sold out",
 };
-// ---------- Helpers ----------
+// helper
 const LOW_STOCK_LIMIT = 5;
 const rupiah = new Intl.NumberFormat("id-ID", {
     style: "currency",
@@ -55,7 +54,7 @@ function getFinalPrice(product) {
         case "fixed":
             return Math.max(0, price - discount.amount);
         default: {
-            // Kalau nanti ada jenis diskon baru dan lupa di-handle, TS langsung error di sini
+            // jaga-jaga kalau ada tipe diskon baru yang lupa di-handle
             const unhandled = discount;
             return unhandled;
         }
@@ -75,14 +74,14 @@ function filterProducts(items, query) {
         return items;
     return items.filter((product) => [product.name, product.category, ...product.tags].some((text) => text.toLowerCase().includes(keyword)));
 }
-// ---------- Cart ----------
+// keranjang
 function getQuantityInCart(cart, productId) {
     return cart.find((item) => item.productId === productId)?.quantity ?? 0;
 }
 function canAddToCart(cart, product) {
     return getQuantityInCart(cart, product.id) < product.stock;
 }
-// Selalu balikin array baru, array lama nggak diutak-atik (mirip setState di React)
+// bikin array baru, yang lama jangan diubah
 function addToCart(cart, productId) {
     const isInCart = cart.some((item) => item.productId === productId);
     if (!isInCart)
@@ -100,13 +99,13 @@ function getCartSummary(cart) {
         };
     }, { count: 0, total: 0 });
 }
-// ---------- State ----------
+// state
 let state = { query: "", cart: [] };
 function setState(patch) {
     state = { ...state, ...patch };
     render();
 }
-// ---------- Render ----------
+// render
 function getButtonLabel(status, canAdd) {
     if (status === "out-of-stock")
         return "Sold out";
@@ -177,20 +176,20 @@ function render() {
         .map((product) => renderCard(product, state.cart))
         .join("");
     resultCount.textContent = `Showing ${visibleProducts.length} of ${products.length} products`;
-    // Query dari user cuma masuk lewat textContent, jadi aman dari HTML injection
+    // pakai textContent biar input user nggak jadi HTML
     emptyQuery.textContent = state.query.trim();
     emptyState.hidden = visibleProducts.length > 0;
     renderCart(getCartSummary(state.cart));
 }
-// ---------- Events ----------
-// innerHTML bikin tombol baru, jadi fokus harus dikembalikan manual
+// event
+// tombol ke-render ulang, jadi fokusnya harus dibalikin
 function restoreFocus(productId) {
     const button = productGrid.querySelector(`button[data-product-id="${productId}"]`);
     if (button && !button.disabled) {
         button.focus();
         return;
     }
-    // Tombol disabled nggak bisa difokus, jadi pindah ke card-nya
+    // tombol disabled nggak bisa difokus, pindah ke card aja
     productGrid.querySelector(`[data-card-id="${productId}"]`)?.focus();
 }
 function handleGridClick(event) {
