@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM &amp; Events | Task list</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <main class="app">
+    <header>
+      <h1>Checkpoint 1 tasks</h1>
+      <p class="summary" id="summary">0 of 0 tasks done</p>
+    </header>
+    <form id="task-form" novalidate>
+      <label for="task-input">New task</label>
+      <div class="form-row">
+        <input type="text" id="task-input" name="task" placeholder="e.g. Take a mobile screenshot" autocomplete="off">
+        <button type="submit">Add task</button>
+      </div>
+      <p class="error-message" id="error-message" aria-live="polite"></p>
+    </form>
+    <ul class="task-list" id="task-list"></ul>
+
+    <p class="empty-state" id="empty-state">No tasks yet. Add your first one above.</p>
+
+    <button type="button" class="clear-button" id="clear-done">Clear completed</button>
+  </main>
+
+</body>
+</html>
