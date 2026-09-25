@@ -1,0 +1,25 @@
+{
+  "name": "typescript-tailwind",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "build:ts": "tsc",
+    "build:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --minify",
+    "build": "npm run build:ts && npm run build:css",
+    "watch:ts": "tsc --watch --preserveWatchOutput",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./dist/output.css --watch=always",
+    "serve": "serve . -l 3000",
+    "dev": "concurrently -n ts,css,serve -c blue,cyan,green \"npm:watch:ts\" \"npm:watch:css\" \"npm:serve\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "concurrently": "^10.0.5",
+    "serve": "^14.2.6",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2"
+  }
+}
