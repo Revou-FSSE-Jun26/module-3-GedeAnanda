@@ -240,3 +240,22 @@ button:hover {
 .site-footer p {
   margin: 0;
 }
+
+/* BREAKPOINT: tablet ke atas (mobile-first, style di atas untuk layar kecil) */
+@media (min-width: 768px) {
+  .skills-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .project-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .contact-form {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .form-field.full-width {
+    grid-column: 1 / -1;
+  }
+}
