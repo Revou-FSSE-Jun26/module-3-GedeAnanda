@@ -29,7 +29,7 @@ npm run dev                  # http://localhost:3000
 
 | Route | Data from the API | Files |
 |---|---|---|
-| `/` | `GET /products?per_page=5`, `GET /categories` | `page.tsx`, `loading.tsx`, `error.tsx` |
+| `/` | `GET /products`, `GET /categories` | `page.tsx`, `loading.tsx`, `error.tsx` |
 | `/products` | `GET /products?search=&category_id=`, `GET /categories` | `layout.tsx`, `page.tsx`, `loading.tsx`, `error.tsx` |
 | `/products/[id]` | `GET /products/:id`, `GET /categories/:id` | `page.tsx`, `loading.tsx`, `error.tsx`, `not-found.tsx` |
 | `/categories` | `GET /categories`, `GET /products` | `page.tsx`, `loading.tsx`, `error.tsx` |
@@ -89,7 +89,7 @@ revoshop/
   `href`, `isActive`, `isNew`, `priority`) get defaults through destructuring.
 - `Card` wraps product cards, the category menu, the product page, order rows and empty states.
 - `QuantityCounter` increments and decrements between 1 and the product's stock.
-- In stock shows a blue **Add** button; out of stock shows a grey, disabled **Out of stock** button
+- In stock shows a blue **Add to cart** button; out of stock shows a grey, disabled **Out of stock** button
   and a greyed-out photo.
 - `SearchBar` is a controlled input (in the header). Typing filters the list on every keystroke, then
   after 350 ms `router.push()` writes `?search=` to the URL so the server refetches from the API.
@@ -118,6 +118,41 @@ revoshop/
 - Icons: [Phosphor Icons](https://phosphoricons.com) (`@phosphor-icons/react`), used only where they
   do a job (search, cart, tab bar, quantity buttons, close, remove).
 - Phones get a bottom tab bar, a fixed buy bar on product pages, and a full-height cart drawer.
+
+## Screenshots
+
+Taken locally with `npm run dev` against the live API.
+
+### Home: 5 products from the API
+![Home page with category banners and 5 products](../screenshots/revoshop/home.png)
+
+### Live search on /products
+The list filters while typing and the URL updates to `?search=mo`.
+![Live search for "mo"](../screenshots/revoshop/live-search.png)
+
+### Search with category filter
+Search and category are sent to the API together (`?search=&category=`).
+![Search combined with a category filter](../screenshots/revoshop/search-category.png)
+
+### Search with sort
+![Search results sorted by highest price](../screenshots/revoshop/search-sort.png)
+
+### Product detail with dynamic title
+The browser tab shows `Mechanical Keyboard | RevoShop`.
+![Product detail page](../screenshots/revoshop/product-detail.png)
+
+### Categories and active nav link
+![Categories page with the Categories link highlighted](../screenshots/revoshop/categories.png)
+
+### Cart summary
+![Cart drawer with item count and total](../screenshots/revoshop/cart.png)
+
+### loading.tsx
+![Skeleton while the product page loads](../screenshots/revoshop/loading.png)
+
+### error.tsx
+Triggered by pointing `NEXT_PUBLIC_API_BASE_URL` at an unreachable server.
+![Error page with Try again button](../screenshots/revoshop/error.png)
 
 ## Notes
 

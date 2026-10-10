@@ -12,6 +12,7 @@ vanilla JavaScript, TypeScript, and Tailwind CSS.
 │   ├── dom-events/         DOM manipulation & event handling (task list)
 │   └── array-methods/      forEach, map, filter, reduce (product inventory)
 ├── typescript-tailwind/    Typed, interactive product catalog
+├── revoshop/               Checkpoint 2: Next.js storefront (see revoshop/README.md)
 └── screenshots/
 ```
 
