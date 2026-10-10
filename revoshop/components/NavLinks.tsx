@@ -3,32 +3,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const links = [
+export const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/products", label: "Products" },
+  { href: "/products", label: "All products" },
   { href: "/categories", label: "Categories" },
-  { href: "/orders", label: "Orders" },
+  { href: "/orders", label: "Order history" },
 ];
 
-function isActive(pathname: string, href: string): boolean {
+export function isActivePath(pathname: string | null, href: string): boolean {
+  if (pathname === null) return false;
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 function LinkList({ pathname }: { pathname: string | null }) {
   return (
-    <ul className="flex items-center gap-1 overflow-x-auto">
-      {links.map((link) => {
-        const active = pathname !== null && isActive(pathname, link.href);
+    <ul className="flex h-11 items-stretch gap-6">
+      {navLinks.map((link) => {
+        const active = isActivePath(pathname, link.href);
         return (
-          <li key={link.href} className="shrink-0">
+          <li key={link.href} className="flex">
             <Link
               href={link.href}
               aria-current={active ? "page" : undefined}
-              className={`inline-flex h-9 items-center rounded-full px-4 text-sm transition-colors duration-200 ${
+              className={`inline-flex items-center border-b-2 text-sm transition-colors duration-150 ${
                 active
-                  ? "bg-accent-soft font-medium text-on-accent-soft"
-                  : "text-muted hover:bg-sunken hover:text-ink"
+                  ? "border-accent font-semibold text-accent"
+                  : "border-transparent text-muted hover:text-ink"
               }`}
             >
               {link.label}
@@ -45,7 +46,6 @@ export default function NavLinks() {
   return <LinkList pathname={pathname} />;
 }
 
-// Shown while the pathname is unknown during prerendering of dynamic routes.
 export function NavLinksFallback() {
   return <LinkList pathname={null} />;
 }

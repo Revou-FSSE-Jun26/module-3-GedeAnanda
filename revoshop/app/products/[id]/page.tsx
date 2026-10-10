@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "@phosphor-icons/react/ssr";
+import { CaretRight } from "@phosphor-icons/react/ssr";
 import AddToCartPanel from "@/components/AddToCartPanel";
+import Card from "@/components/Card";
 import ProductCard from "@/components/ProductCard";
+import ProductImage from "@/components/ProductImage";
 import StockLabel from "@/components/StockLabel";
 import { getCategory, getProduct } from "@/lib/api";
-import { formatDate, formatPrice, productImage } from "@/lib/format";
+import { formatDate, formatPrice } from "@/lib/format";
+import { getProductImage } from "@/lib/images";
 
 function parseId(value: string): number | null {
   const id = Number(value);
@@ -34,80 +36,97 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
   if (!product) notFound();
 
   const category = product.category_id ? await getCategory(product.category_id) : null;
-  const related = category?.products.filter((item) => item.id !== product.id).slice(0, 3) ?? [];
+  const related = category?.products.filter((item) => item.id !== product.id).slice(0, 4) ?? [];
+  const imageUrl = getProductImage(product);
+  const breadcrumbs = [
+    { href: "/", label: "Home" },
+    { href: "/products", label: "Products" },
+    ...(category ? [{ href: `/products?category=${category.id}`, label: category.name }] : []),
+  ];
 
   return (
-    <div className="space-y-14">
-      <div>
-        <Link
-          href="/products"
-          className="inline-flex h-9 items-center gap-1.5 rounded-full pr-3 text-sm text-muted transition-colors duration-200 hover:text-ink"
-        >
-          <ArrowLeft size={16} aria-hidden />
-          All products
-        </Link>
-
-        <article className="mt-4 grid gap-8 md:grid-cols-2 md:gap-10">
-          <div className="relative aspect-square overflow-hidden rounded-2xl bg-sunken">
-            <Image
-              src={productImage(product.id, 1000)}
-              alt={product.name}
-              fill
-              priority
-              sizes="(min-width: 1024px) 34vw, (min-width: 768px) 50vw, 100vw"
-              className="object-cover"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            {category && (
-              <Link
-                href={`/products?category=${category.id}`}
-                className="self-start rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-on-accent-soft transition-opacity duration-200 hover:opacity-80"
-              >
-                {category.name}
+    <div className="space-y-6 pb-4 md:pb-0">
+      <nav aria-label="Breadcrumb">
+        <ol className="flex flex-wrap items-center gap-1 text-sm text-subtle">
+          {breadcrumbs.map((crumb) => (
+            <li key={crumb.href} className="flex items-center gap-1">
+              <Link href={crumb.href} className="text-accent hover:underline">
+                {crumb.label}
               </Link>
-            )}
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight text-balance text-ink sm:text-4xl">
-              {product.name}
-            </h1>
-            <p className="mt-3 text-2xl font-semibold tabular-nums text-ink">{formatPrice(product.price)}</p>
-            <p className="mt-6 max-w-[60ch] leading-relaxed text-muted">
-              {product.description ?? "No description has been added for this product yet."}
+              <CaretRight size={12} aria-hidden />
+            </li>
+          ))}
+          <li aria-current="page" className="max-w-[28ch] truncate text-muted">
+            {product.name}
+          </li>
+        </ol>
+      </nav>
+
+      <Card as="article" className="grid gap-6 md:grid-cols-2 lg:gap-8">
+        <div className="relative aspect-square overflow-hidden rounded-lg bg-sunken">
+          <ProductImage
+            src={imageUrl}
+            alt={product.name}
+            priority
+            sizes="(min-width: 1024px) 36vw, (min-width: 768px) 50vw, 100vw"
+          />
+        </div>
+
+        <div className="flex flex-col gap-5">
+          <div>
+            <h1 className="text-xl font-bold text-ink sm:text-2xl">{product.name}</h1>
+            <p className="mt-1 text-sm text-subtle">
+              <StockLabel stock={product.stock} isActive={product.is_active} />
             </p>
-
-            <dl className="mt-8 grid grid-cols-2 gap-4 rounded-2xl border border-line p-4 text-sm">
-              <div>
-                <dt className="text-subtle">Availability</dt>
-                <dd className="mt-1">
-                  <StockLabel stock={product.stock} isActive={product.is_active} />
-                </dd>
-              </div>
-              <div>
-                <dt className="text-subtle">Listed</dt>
-                <dd className="mt-1 text-ink">{formatDate(product.created_at)}</dd>
-              </div>
-            </dl>
-
-            <div className="mt-8">
-              <AddToCartPanel
-                id={product.id}
-                name={product.name}
-                price={product.price}
-                stock={product.stock}
-                isActive={product.is_active}
-              />
-            </div>
+            <p className="mt-3 text-3xl font-bold text-ink tabular-nums">{formatPrice(product.price)}</p>
           </div>
-        </article>
-      </div>
+
+          <dl className="grid grid-cols-[7rem_1fr] gap-y-2 border-y border-line py-4 text-sm">
+            <dt className="text-subtle">Category</dt>
+            <dd>
+              {category ? (
+                <Link href={`/products?category=${category.id}`} className="font-semibold text-accent hover:underline">
+                  {category.name}
+                </Link>
+              ) : (
+                <span className="text-muted">Uncategorized</span>
+              )}
+            </dd>
+            <dt className="text-subtle">Stock</dt>
+            <dd className="text-ink tabular-nums">{product.stock}</dd>
+            <dt className="text-subtle">Listed</dt>
+            <dd className="text-ink">{formatDate(product.created_at)}</dd>
+          </dl>
+
+          <div>
+            <h2 className="text-sm font-bold text-ink">Description</h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-muted">
+              {product.description ?? "The seller has not added a description yet."}
+            </p>
+          </div>
+
+          <AddToCartPanel
+            id={product.id}
+            name={product.name}
+            price={product.price}
+            stock={product.stock}
+            imageUrl={imageUrl}
+            isActive={product.is_active}
+          />
+        </div>
+      </Card>
 
       {category && related.length > 0 && (
         <section aria-labelledby="related-heading">
-          <h2 id="related-heading" className="text-xl font-semibold tracking-tight text-ink">
-            More from {category.name}
-          </h2>
-          <ul className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="related-heading" className="text-lg font-bold text-ink">
+              More from {category.name}
+            </h2>
+            <Link href={`/products?category=${category.id}`} className="text-sm font-semibold text-accent hover:underline">
+              See all
+            </Link>
+          </div>
+          <ul className="mt-3 grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 xl:grid-cols-4">
             {related.map((item) => (
               <li key={item.id} className="grid">
                 <ProductCard
@@ -115,6 +134,7 @@ export default async function ProductDetailPage({ params }: PageProps<"/products
                   name={item.name}
                   price={item.price}
                   stock={item.stock}
+                  imageUrl={getProductImage(item)}
                   isActive={item.is_active}
                   categoryName={category.name}
                   href={`/products/${item.id}`}

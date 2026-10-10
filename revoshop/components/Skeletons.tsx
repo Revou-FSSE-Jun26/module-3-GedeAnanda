@@ -2,18 +2,19 @@ import type { CSSProperties } from "react";
 import Card from "./Card";
 
 export function Skeleton({ className = "", style }: { className?: string; style?: CSSProperties }) {
-  return <div aria-hidden style={style} className={`rounded-full bg-sunken motion-safe:animate-pulse ${className}`} />;
+  return <div aria-hidden style={style} className={`rounded-md bg-line/60 motion-safe:animate-pulse ${className}`} />;
 }
 
 export function ProductCardSkeleton() {
   return (
-    <Card padded={false} className="overflow-hidden">
-      <div aria-hidden className="aspect-square bg-sunken motion-safe:animate-pulse" />
-      <div className="space-y-3 p-4">
+    <Card padded={false}>
+      <div aria-hidden className="aspect-square rounded-t-lg bg-line/60 motion-safe:animate-pulse" />
+      <div className="space-y-2 p-3">
+        <Skeleton className="h-3.5 w-full" />
+        <Skeleton className="h-3.5 w-2/3" />
+        <Skeleton className="h-5 w-1/2" />
         <Skeleton className="h-3 w-1/3" />
-        <Skeleton className="h-4 w-4/5" />
-        <Skeleton className="h-4 w-1/2" />
-        <Skeleton className="mt-5 h-10 w-full" />
+        <Skeleton className="mt-3 h-8 w-full rounded-lg" />
       </div>
     </Card>
   );

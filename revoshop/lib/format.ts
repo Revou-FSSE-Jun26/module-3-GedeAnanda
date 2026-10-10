@@ -19,11 +19,6 @@ export function formatDate(iso: string | null): string {
   return shortDate.format(new Date(iso));
 }
 
-// The API has no image field yet, so every product gets a stable placeholder photo.
-export function productImage(seed: number | string, size = 800): string {
-  return `https://picsum.photos/seed/revoshop-${seed}/${size}/${size}`;
-}
-
 export function pluralize(count: number, singular: string, plural = `${singular}s`): string {
   return `${count} ${count === 1 ? singular : plural}`;
 }

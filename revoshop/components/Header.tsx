@@ -1,27 +1,26 @@
 import { Suspense } from "react";
 import Logo from "./Logo";
 import NavLinks, { NavLinksFallback } from "./NavLinks";
+import HeaderSearch from "./HeaderSearch";
 import CartButton from "./CartButton";
 
 export default function Header() {
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-canvas/85 backdrop-blur-md">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center">
-          <Logo />
-        </div>
-        <nav
-          aria-label="Main"
-          className="order-last w-full pb-3 md:order-none md:w-auto md:pb-0"
-        >
-          <Suspense fallback={<NavLinksFallback />}>
-            <NavLinks />
-          </Suspense>
-        </nav>
-        <div className="ml-auto flex h-16 items-center">
+    <header className="sticky top-0 z-40 bg-surface shadow-[0_1px_0_var(--color-line)]">
+      <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:h-16 sm:gap-6 sm:px-6 lg:px-8">
+        <Logo />
+        <HeaderSearch />
+        <div className="hidden md:block">
           <CartButton />
         </div>
       </div>
+      <nav aria-label="Main" className="hidden border-t border-line md:block">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Suspense fallback={<NavLinksFallback />}>
+            <NavLinks />
+          </Suspense>
+        </div>
+      </nav>
     </header>
   );
 }

@@ -5,7 +5,6 @@ interface CardProps extends HTMLAttributes<HTMLElement> {
   padded?: boolean;
 }
 
-// Shared surface used by product cards, the cart summary, forms and list rows.
 export default function Card({
   as: Tag = "div",
   padded = true,
@@ -15,7 +14,7 @@ export default function Card({
 }: CardProps) {
   return (
     <Tag
-      className={`rounded-2xl border border-line bg-surface shadow-card ${padded ? "p-5 sm:p-6" : ""} ${className}`}
+      className={`rounded-lg bg-surface shadow-card ring-1 ring-line/70 ${padded ? "p-4 sm:p-5" : ""} ${className}`}
       {...rest}
     >
       {children}

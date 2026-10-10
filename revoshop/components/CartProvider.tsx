@@ -1,14 +1,15 @@
 "use client";
 
-import { createContext, useContext, useMemo, useReducer } from "react";
+import { createContext, useCallback, useContext, useMemo, useReducer, useState } from "react";
 import type { CartItem } from "@/lib/types";
 
 type CartAction =
   | { type: "add"; item: CartItem }
+  | { type: "setQuantity"; productId: number; quantity: number }
   | { type: "remove"; productId: number }
   | { type: "clear" };
 
-// Every branch returns a new array or new objects; the previous state is never mutated.
+// Immutable updates
 function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   switch (action.type) {
     case "add": {
@@ -21,6 +22,12 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
           : item,
       );
     }
+    case "setQuantity":
+      return state.map((item) =>
+        item.productId === action.productId
+          ? { ...item, quantity: Math.max(1, Math.min(action.quantity, item.stock)) }
+          : item,
+      );
     case "remove":
       return state.filter((item) => item.productId !== action.productId);
     case "clear":
@@ -32,26 +39,50 @@ interface CartContextValue {
   items: CartItem[];
   itemCount: number;
   total: number;
+  isOpen: boolean;
+  lastAdded: CartItem | null;
   addItem: (item: CartItem) => void;
+  setQuantity: (productId: number, quantity: number) => void;
   removeItem: (productId: number) => void;
   clearCart: () => void;
+  openCart: () => void;
+  closeCart: () => void;
+  dismissLastAdded: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
+  const [isOpen, setIsOpen] = useState(false);
+  const [lastAdded, setLastAdded] = useState<CartItem | null>(null);
+
+  const addItem = useCallback((item: CartItem) => {
+    dispatch({ type: "add", item });
+    setLastAdded(item);
+  }, []);
+
+  const dismissLastAdded = useCallback(() => setLastAdded(null), []);
 
   const value = useMemo<CartContextValue>(
     () => ({
       items,
       itemCount: items.reduce((sum, item) => sum + item.quantity, 0),
       total: items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-      addItem: (item) => dispatch({ type: "add", item }),
+      isOpen,
+      lastAdded,
+      addItem,
+      setQuantity: (productId, quantity) => dispatch({ type: "setQuantity", productId, quantity }),
       removeItem: (productId) => dispatch({ type: "remove", productId }),
       clearCart: () => dispatch({ type: "clear" }),
+      openCart: () => {
+        setLastAdded(null);
+        setIsOpen(true);
+      },
+      closeCart: () => setIsOpen(false),
+      dismissLastAdded,
     }),
-    [items],
+    [items, isOpen, lastAdded, addItem, dismissLastAdded],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

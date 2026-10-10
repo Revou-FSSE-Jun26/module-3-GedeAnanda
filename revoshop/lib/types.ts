@@ -1,5 +1,3 @@
-// Shapes returned by the RevoShop Flask API (Module 2).
-
 export interface Product {
   id: number;
   category_id: number | null;
@@ -8,6 +6,8 @@ export interface Product {
   stock: number;
   description: string | null;
   is_active: boolean;
+  // Not in API yet
+  image_url?: string | null;
   created_at: string | null;
   updated_at: string | null;
 }
@@ -24,7 +24,8 @@ export interface CategoryWithProducts extends Category {
   products: Product[];
 }
 
-export type OrderStatus = "pending" | "paid" | "shipped" | "completed" | "cancelled";
+export const ORDER_STATUSES = ["pending", "paid", "shipped", "completed", "cancelled"] as const;
+export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export interface OrderItem {
   id: number;
@@ -58,11 +59,11 @@ export interface ApiResponse<T> {
   pagination?: Pagination;
 }
 
-// Client-side cart line. Prices are copied in so the cart does not need the API.
 export interface CartItem {
   productId: number;
   name: string;
   price: number;
   quantity: number;
   stock: number;
+  imageUrl?: string;
 }

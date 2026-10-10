@@ -1,28 +1,26 @@
+"use client";
+
+import { useCatalog } from "./CatalogProvider";
 import type { Category } from "@/lib/types";
 
-interface CategoryFilterProps {
-  categories: Category[];
-  activeId: number | null;
-  onSelect: (categoryId: number | null) => void;
-}
-
-export default function CategoryFilter({ categories, activeId, onSelect }: CategoryFilterProps) {
+export default function CategoryFilter({ categories }: { categories: Category[] }) {
+  const { categoryId, selectCategory } = useCatalog();
   const options = [{ id: null, name: "All" }, ...categories];
 
   return (
-    <div role="group" aria-label="Filter by category" className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
+    <div role="group" aria-label="Filter by category" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0">
       {options.map((option) => {
-        const active = option.id === activeId;
+        const active = option.id === categoryId;
         return (
           <button
             key={option.id ?? "all"}
             type="button"
             aria-pressed={active}
-            onClick={() => onSelect(option.id)}
-            className={`h-9 shrink-0 rounded-full border px-4 text-sm whitespace-nowrap transition-colors duration-200 ${
+            onClick={() => selectCategory(option.id)}
+            className={`h-9 shrink-0 rounded-lg border px-3.5 text-sm whitespace-nowrap transition-colors duration-150 ${
               active
-                ? "border-ink bg-ink font-medium text-canvas"
-                : "border-line bg-surface text-muted hover:border-subtle/60 hover:text-ink"
+                ? "border-accent bg-accent-soft font-semibold text-on-accent-soft"
+                : "border-line bg-surface text-muted hover:border-accent/50 hover:text-ink"
             }`}
           >
             {option.name}

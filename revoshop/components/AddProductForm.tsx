@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
-import { CheckCircle } from "@phosphor-icons/react";
-import Card from "./Card";
+import { X } from "@phosphor-icons/react";
 import type { Category, Product } from "@/lib/types";
 
 interface AddProductFormProps {
@@ -45,7 +44,7 @@ function validate(values: FormValues): FormErrors {
 }
 
 const inputBase =
-  "h-11 w-full rounded-full border bg-surface px-4 text-sm text-ink transition-colors duration-200 placeholder:text-subtle focus:outline-none focus:ring-3";
+  "h-10 w-full rounded-lg border bg-surface px-3 text-sm text-ink transition-colors duration-150 placeholder:text-subtle focus:outline-none focus:ring-3";
 
 function inputClass(hasError: boolean) {
   return `${inputBase} ${
@@ -87,13 +86,12 @@ export default function AddProductForm({ categories, onAddProduct, onCancel }: A
   const [values, setValues] = useState<FormValues>(emptyValues);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
-  const [lastAdded, setLastAdded] = useState<string | null>(null);
 
   function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
     const { name, value } = event.target;
     const next = { ...values, [name]: value };
     setValues(next);
-    // Re-check live only after the first submit, so the form does not shout while typing.
+    // Live after submit
     if (submitted) setErrors(validate(next));
   }
 
@@ -112,7 +110,7 @@ export default function AddProductForm({ categories, onAddProduct, onCancel }: A
 
     const now = new Date().toISOString();
     onAddProduct({
-      // Negative ids never collide with API ids and mark the product as local.
+      // Local id
       id: -Date.now(),
       category_id: Number(values.categoryId),
       name: values.name.trim(),
@@ -124,7 +122,6 @@ export default function AddProductForm({ categories, onAddProduct, onCancel }: A
       updated_at: now,
     });
 
-    setLastAdded(values.name.trim());
     setValues(emptyValues);
     setErrors({});
     setSubmitted(false);
@@ -133,16 +130,35 @@ export default function AddProductForm({ categories, onAddProduct, onCancel }: A
   const describedBy = (id: keyof FormValues, hasHint = false) =>
     errors[id] || hasHint ? `${id}-message` : undefined;
 
-  return (
-    <Card as="section" aria-labelledby="add-product-heading" className="motion-safe:animate-rise">
-      <h2 id="add-product-heading" className="text-lg font-semibold tracking-tight">
-        Add a product
-      </h2>
-      <p className="mt-1 max-w-[60ch] text-sm text-muted">
-        New products join the end of the list below. They stay on this page and are not saved to the API yet.
-      </p>
+  function handleCancel() {
+    setValues(emptyValues);
+    setErrors({});
+    setSubmitted(false);
+    onCancel?.();
+  }
 
-      <form onSubmit={handleSubmit} noValidate className="mt-6 grid gap-5 sm:grid-cols-2">
+  return (
+    <form onSubmit={handleSubmit} noValidate aria-labelledby="add-product-heading">
+      <div className="flex items-start justify-between gap-4 border-b border-line px-5 py-4">
+        <div>
+          <h2 id="add-product-heading" className="text-base font-bold text-ink">
+            Add a product
+          </h2>
+          <p className="mt-0.5 text-sm text-muted">It joins the end of the list on this page. Saving to the API comes later.</p>
+        </div>
+        {onCancel && (
+          <button
+            type="button"
+            onClick={handleCancel}
+            aria-label="Close"
+            className="grid size-9 shrink-0 place-items-center rounded-lg text-muted transition-colors duration-150 hover:bg-sunken hover:text-ink"
+          >
+            <X size={20} aria-hidden />
+          </button>
+        )}
+      </div>
+
+      <div className="grid gap-4 px-5 py-5 sm:grid-cols-2">
         <div className="sm:col-span-2">
           <Field id="name" label="Product name" error={errors.name}>
             <input
@@ -219,31 +235,25 @@ export default function AddProductForm({ categories, onAddProduct, onCancel }: A
             className={inputClass(false)}
           />
         </Field>
+      </div>
 
-        <div className="flex flex-wrap items-center gap-3 sm:col-span-2">
+      <div className="flex justify-end gap-2 border-t border-line px-5 py-4">
+        {onCancel && (
           <button
-            type="submit"
-            className="inline-flex h-11 items-center justify-center rounded-full bg-accent px-6 text-sm font-medium text-on-accent transition-[background-color,transform] duration-200 hover:bg-accent-hover active:scale-[0.98]"
+            type="button"
+            onClick={handleCancel}
+            className="h-10 rounded-lg border border-line px-4 text-sm font-semibold text-muted transition-colors duration-150 hover:bg-sunken hover:text-ink"
           >
-            Add product
+            Cancel
           </button>
-          {onCancel && (
-            <button
-              type="button"
-              onClick={onCancel}
-              className="inline-flex h-11 items-center justify-center rounded-full px-5 text-sm font-medium text-muted transition-colors duration-200 hover:bg-sunken hover:text-ink"
-            >
-              Close
-            </button>
-          )}
-          {lastAdded && (
-            <p role="status" className="inline-flex items-center gap-2 text-sm text-on-accent-soft">
-              <CheckCircle size={18} weight="fill" aria-hidden />
-              Added &ldquo;{lastAdded}&rdquo; to the list.
-            </p>
-          )}
-        </div>
-      </form>
-    </Card>
+        )}
+        <button
+          type="submit"
+          className="h-10 rounded-lg bg-accent px-5 text-sm font-semibold text-on-accent transition-colors duration-150 hover:bg-accent-hover"
+        >
+          Add product
+        </button>
+      </div>
+    </form>
   );
 }

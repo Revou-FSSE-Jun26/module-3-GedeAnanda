@@ -1,74 +1,122 @@
 "use client";
 
-import { ShoppingCartSimple, Trash } from "@phosphor-icons/react";
-import Card from "./Card";
+import Image from "next/image";
+import Link from "next/link";
+import { Trash, X } from "@phosphor-icons/react";
+import QuantityCounter from "./QuantityCounter";
 import { useCart } from "./CartProvider";
 import { formatPrice, pluralize } from "@/lib/format";
 
-export default function CartSummary() {
-  const { items, itemCount, total, removeItem, clearCart } = useCart();
+export default function CartSummary({ onClose }: { onClose: () => void }) {
+  const { items, itemCount, total, setQuantity, removeItem, clearCart } = useCart();
 
   return (
-    <Card as="section" id="cart" aria-labelledby="cart-heading" className="scroll-mt-28 lg:sticky lg:top-24">
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 id="cart-heading" className="text-lg font-semibold tracking-tight">
-          Your cart
+    <div className="flex h-full flex-col">
+      <div className="flex h-14 shrink-0 items-center justify-between border-b border-line px-4 sm:px-5">
+        <h2 id="cart-heading" className="text-base font-bold text-ink">
+          Cart <span className="font-normal text-subtle">({pluralize(itemCount, "item")})</span>
         </h2>
-        <p className="text-sm text-subtle tabular-nums" aria-live="polite">
-          {pluralize(itemCount, "item")}
-        </p>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close cart"
+          className="grid size-9 place-items-center rounded-lg text-muted transition-colors duration-150 hover:bg-sunken hover:text-ink"
+        >
+          <X size={20} aria-hidden />
+        </button>
       </div>
 
       {items.length === 0 ? (
-        <div className="mt-5 flex flex-col items-center rounded-xl border border-dashed border-line px-4 py-8 text-center">
-          <ShoppingCartSimple size={28} className="text-subtle" aria-hidden />
-          <p className="mt-3 text-sm font-medium text-ink">Your cart is empty</p>
-          <p className="mt-1 text-sm text-muted">Pick a product and it will show up here.</p>
+        <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+          <p className="font-semibold text-ink">Your cart is empty</p>
+          <p className="mt-1 max-w-[30ch] text-sm text-muted">
+            Browse the catalog and tap Add to put something here.
+          </p>
+          <Link
+            href="/products"
+            onClick={onClose}
+            className="mt-5 inline-flex h-10 items-center rounded-lg bg-accent px-5 text-sm font-semibold text-on-accent transition-colors duration-150 hover:bg-accent-hover"
+          >
+            Start shopping
+          </Link>
         </div>
       ) : (
         <>
-          <ul className="mt-5 space-y-4">
+          <ul className="flex-1 divide-y divide-line overflow-y-auto px-4 sm:px-5">
             {items.map((item) => (
-              <li key={item.productId} className="flex items-start gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-ink">{item.name}</p>
-                  <p className="text-xs text-subtle tabular-nums">
-                    {item.quantity} &times; {formatPrice(item.price)}
-                  </p>
-                </div>
-                <p className="text-sm font-medium tabular-nums">{formatPrice(item.price * item.quantity)}</p>
-                <button
-                  type="button"
-                  onClick={() => removeItem(item.productId)}
-                  aria-label={`Remove ${item.name} from cart`}
-                  className="-mt-1 grid size-8 shrink-0 place-items-center rounded-full text-subtle transition-colors duration-200 hover:bg-danger-soft hover:text-danger"
+              <li key={item.productId} className="flex gap-3 py-4">
+                <Link
+                  href={`/products/${item.productId}`}
+                  onClick={onClose}
+                  className="relative size-16 shrink-0 overflow-hidden rounded-lg bg-sunken"
                 >
-                  <Trash size={16} aria-hidden />
-                </button>
+                  {item.imageUrl ? (
+                    <Image src={item.imageUrl} alt={item.name} fill sizes="64px" className="object-cover" />
+                  ) : (
+                    <span className="grid h-full place-items-center text-[10px] text-subtle">No photo</span>
+                  )}
+                </Link>
+                <div className="min-w-0 flex-1">
+                  <Link
+                    href={`/products/${item.productId}`}
+                    onClick={onClose}
+                    className="line-clamp-2 text-sm text-ink hover:text-accent"
+                  >
+                    {item.name}
+                  </Link>
+                  <p className="mt-0.5 text-sm font-bold tabular-nums">{formatPrice(item.price)}</p>
+                  <div className="mt-2 flex items-center justify-between gap-2">
+                    <QuantityCounter
+                      size="sm"
+                      value={item.quantity}
+                      max={item.stock}
+                      onChange={(quantity) => setQuantity(item.productId, quantity)}
+                      label={`Quantity of ${item.name}`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeItem(item.productId)}
+                      aria-label={`Remove ${item.name} from cart`}
+                      className="grid size-8 place-items-center rounded-lg text-subtle transition-colors duration-150 hover:bg-danger-soft hover:text-danger"
+                    >
+                      <Trash size={18} aria-hidden />
+                    </button>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>
 
-          <dl className="mt-5 space-y-2 border-t border-line pt-4">
-            <div className="flex justify-between text-sm text-muted">
-              <dt>Items</dt>
-              <dd className="tabular-nums">{itemCount}</dd>
+          <div className="shrink-0 space-y-3 border-t border-line px-4 py-4 sm:px-5">
+            <dl className="space-y-1">
+              <div className="flex justify-between text-sm text-muted">
+                <dt>Items</dt>
+                <dd className="tabular-nums">{itemCount}</dd>
+              </div>
+              <div className="flex items-baseline justify-between">
+                <dt className="font-semibold text-ink">Total</dt>
+                <dd className="text-lg font-bold text-ink tabular-nums">{formatPrice(total)}</dd>
+              </div>
+            </dl>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={clearCart}
+                className="h-11 rounded-lg border border-line px-4 text-sm font-semibold text-muted transition-colors duration-150 hover:border-danger hover:text-danger"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="h-11 flex-1 rounded-lg bg-accent text-sm font-semibold text-on-accent transition-colors duration-150 hover:bg-accent-hover"
+              >
+                Continue shopping
+              </button>
             </div>
-            <div className="flex justify-between font-semibold text-ink">
-              <dt>Total</dt>
-              <dd className="tabular-nums">{formatPrice(total)}</dd>
-            </div>
-          </dl>
-
-          <button
-            type="button"
-            onClick={clearCart}
-            className="mt-5 h-10 w-full rounded-full border border-line text-sm font-medium text-muted transition-colors duration-200 hover:bg-sunken hover:text-ink"
-          >
-            Clear cart
-          </button>
+          </div>
         </>
       )}
-    </Card>
+    </div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Check, ShoppingCartSimple } from "@phosphor-icons/react";
 import QuantityCounter from "./QuantityCounter";
 import { useCart } from "./CartProvider";
 import { formatPrice } from "@/lib/format";
@@ -11,60 +10,69 @@ interface AddToCartPanelProps {
   name: string;
   price: number;
   stock: number;
+  imageUrl?: string;
   isActive?: boolean;
 }
 
-export default function AddToCartPanel({ id, name, price, stock, isActive = true }: AddToCartPanelProps) {
+export default function AddToCartPanel({
+  id,
+  name,
+  price,
+  stock,
+  imageUrl,
+  isActive = true,
+}: AddToCartPanelProps) {
   const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [justAdded, setJustAdded] = useState(false);
   const inStock = isActive && stock > 0;
 
   function handleAddToCart() {
-    addItem({ productId: id, name, price, quantity, stock });
+    addItem({ productId: id, name, price, quantity, stock, imageUrl });
     setQuantity(1);
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1400);
   }
 
-  if (!inStock) {
-    return (
-      <div className="space-y-2">
-        <button
-          type="button"
-          disabled
-          className="inline-flex h-12 w-full cursor-not-allowed items-center justify-center rounded-full border border-dashed border-line bg-sunken text-sm font-medium text-subtle"
-        >
-          {isActive ? "Out of stock" : "Unavailable"}
-        </button>
-        <p className="text-sm text-muted">This product cannot be added to your cart right now.</p>
-      </div>
+  const addButton = (className: string) =>
+    inStock ? (
+      <button
+        type="button"
+        onClick={handleAddToCart}
+        className={`rounded-lg bg-accent text-sm font-semibold text-on-accent transition-[background-color,transform] duration-150 hover:bg-accent-hover active:scale-[0.98] ${className}`}
+      >
+        Add to cart
+      </button>
+    ) : (
+      <button
+        type="button"
+        disabled
+        className={`cursor-not-allowed rounded-lg bg-sunken text-sm font-semibold text-subtle ${className}`}
+      >
+        {isActive ? "Out of stock" : "Unavailable"}
+      </button>
     );
-  }
 
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-        <QuantityCounter value={quantity} onChange={setQuantity} max={stock} />
-        <button
-          type="button"
-          onClick={handleAddToCart}
-          className="inline-flex h-12 flex-1 items-center justify-center gap-2 rounded-full bg-accent px-6 text-sm font-medium text-on-accent transition-[background-color,transform] duration-200 hover:bg-accent-hover active:scale-[0.98]"
-        >
-          {justAdded ? (
-            <>
-              <Check size={18} weight="bold" aria-hidden /> Added to cart
-            </>
-          ) : (
-            <>
-              <ShoppingCartSimple size={18} weight="bold" aria-hidden /> Add to cart
-            </>
-          )}
-        </button>
+    <>
+      <div className="hidden space-y-4 rounded-lg p-4 ring-1 ring-line md:block">
+        <p className="text-sm font-bold text-ink">Set quantity</p>
+        {inStock && (
+          <div className="flex items-center gap-3">
+            <QuantityCounter value={quantity} onChange={setQuantity} max={stock} />
+            <span className="text-sm text-subtle">Stock {stock}</span>
+          </div>
+        )}
+        <div className="flex items-baseline justify-between">
+          <span className="text-sm text-muted">Subtotal</span>
+          <span className="text-lg font-bold text-ink tabular-nums">{formatPrice(price * quantity)}</span>
+        </div>
+        {addButton("h-11 w-full")}
       </div>
-      <p className="text-sm text-muted">
-        Subtotal <span className="font-medium text-ink tabular-nums">{formatPrice(price * quantity)}</span>
-      </p>
-    </div>
+
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-bar md:hidden">
+        <div className="flex items-center gap-3">
+          {inStock && <QuantityCounter value={quantity} onChange={setQuantity} max={stock} />}
+          {addButton("h-10 flex-1")}
+        </div>
+      </div>
+    </>
   );
 }

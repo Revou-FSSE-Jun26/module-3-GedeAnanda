@@ -1,68 +1,42 @@
 @import "tailwindcss";
 
-/*
-  Design tokens. One neutral family (zinc) and one accent (emerald).
-  Shape rule: controls (buttons, inputs, chips) are pills, surfaces and images use 16px.
-*/
+/* Light theme tokens */
 @theme {
-  --color-canvas: #fafafa;
+  --color-canvas: #f3f4f6;
   --color-surface: #ffffff;
-  --color-sunken: #f4f4f5;
-  --color-line: #e4e4e7;
-  --color-ink: #18181b;
-  --color-muted: #52525b;
-  --color-subtle: #71717a;
-  --color-accent: #047857;
-  --color-accent-hover: #065f46;
+  --color-sunken: #f3f4f6;
+  --color-line: #e5e7eb;
+  --color-ink: #111827;
+  --color-muted: #4b5563;
+  --color-subtle: #6b7280;
+
+  --color-accent: #1e54f6;
+  --color-accent-hover: #1741c4;
   --color-on-accent: #ffffff;
-  --color-accent-soft: #ecfdf5;
-  --color-on-accent-soft: #065f46;
-  --color-danger: #b91c1c;
+  --color-accent-soft: #eaf0ff;
+  --color-on-accent-soft: #1741c4;
+
+  --color-success: #047857;
+  --color-success-soft: #e3f7ee;
+  --color-warning-soft: #fff4d6;
+  --color-on-warning-soft: #8a5a00;
+  --color-danger: #dc2626;
   --color-danger-soft: #fef2f2;
 
-  --shadow-card: 0 1px 2px rgb(24 24 27 / 0.04), 0 12px 32px -16px rgb(24 24 27 / 0.14);
-
-  --animate-rise: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
+  --shadow-card: 0 1px 2px rgb(17 24 39 / 0.05);
+  --shadow-lift: 0 1px 2px rgb(17 24 39 / 0.05), 0 8px 20px -8px rgb(17 24 39 / 0.18);
+  --shadow-bar: 0 -1px 0 rgb(17 24 39 / 0.06), 0 -8px 20px -12px rgb(17 24 39 / 0.2);
 }
 
 @theme inline {
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-canvas: #0c0c0e;
-    --color-surface: #151518;
-    --color-sunken: #1e1e22;
-    --color-line: #2a2a30;
-    --color-ink: #f4f4f5;
-    --color-muted: #a1a1aa;
-    --color-subtle: #8b8b94;
-    --color-accent: #34d399;
-    --color-accent-hover: #6ee7b7;
-    --color-on-accent: #04261a;
-    --color-accent-soft: rgb(52 211 153 / 0.12);
-    --color-on-accent-soft: #6ee7b7;
-    --color-danger: #f87171;
-    --color-danger-soft: rgb(248 113 113 / 0.12);
-    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -16px rgb(0 0 0 / 0.6);
-    color-scheme: dark;
-  }
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 }
 
 @layer base {
+  :root {
+    color-scheme: light;
+  }
+
   body {
     background-color: var(--color-canvas);
     color: var(--color-ink);
@@ -76,6 +50,15 @@
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]) {
     cursor: pointer;
+  }
+
+  /* Scroll lock */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+
+  dialog::backdrop {
+    background-color: rgb(17 24 39 / 0.45);
   }
 }
 

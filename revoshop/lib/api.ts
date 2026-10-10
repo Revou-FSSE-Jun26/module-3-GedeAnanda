@@ -4,12 +4,12 @@ import type {
   Category,
   CategoryWithProducts,
   Order,
+  OrderStatus,
   Pagination,
   Product,
 } from "./types";
 
-// Server-side data access for the RevoShop Flask API.
-// Only import this file from Server Components.
+// Server only
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/+$/, "");
 
@@ -32,7 +32,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<ApiResponse
   const body = await res.json().catch(() => null);
 
   if (!res.ok) {
-    // Flask returns { error }, flask-jwt-extended returns { msg }.
+    // { error } or { msg }
     const message = body?.error ?? body?.msg ?? `Request failed with status ${res.status}`;
     throw new ApiError(message, res.status);
   }
@@ -59,7 +59,7 @@ export async function getProducts({
   return { products: res.data, pagination: res.pagination };
 }
 
-// Wrapped in cache() so generateMetadata and the page share one request.
+// Dedupe per request
 export const getProduct = cache(async (id: number): Promise<Product | null> => {
   try {
     const res = await request<Product>(`/products/${id}`);
@@ -98,15 +98,18 @@ async function getAccessToken(): Promise<string | null> {
   return res.data.access_token;
 }
 
-// Returns null when no API account is configured in .env.local.
-export async function getOrders(): Promise<Order[] | null> {
+// null = no creds
+export async function getOrders(status?: OrderStatus): Promise<Order[] | null> {
   const token = await getAccessToken();
   if (!token) return null;
 
-  const headers = { Authorization: `Bearer ${token}` };
-  const list = await request<Order[]>("/orders?per_page=20", { headers });
+  const params = new URLSearchParams({ per_page: "20" });
+  if (status) params.set("status", status);
 
-  // The list endpoint has no line items, so load each order's detail in parallel.
+  const headers = { Authorization: `Bearer ${token}` };
+  const list = await request<Order[]>(`/orders?${params}`, { headers });
+
+  // Need line items
   return Promise.all(
     list.data.map(async (order) => {
       const res = await request<Order>(`/orders/${order.id}`, { headers });

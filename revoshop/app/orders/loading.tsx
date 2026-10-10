@@ -4,22 +4,24 @@ import { LoadingLabel, Skeleton } from "@/components/Skeletons";
 
 export default function OrdersLoading() {
   return (
-    <Container narrow className="py-8 sm:py-10">
+    <Container narrow className="py-4 sm:py-6">
       <div role="status">
         <LoadingLabel>Loading orders</LoadingLabel>
-        <Skeleton className="h-9 w-56" />
-        <Skeleton className="mt-3 h-4 w-72" />
-        <div className="mt-8 space-y-4">
+        <Skeleton className="h-7 w-44" />
+        <div className="mt-3 flex gap-2">
+          {[12, 20, 14, 18, 24].map((width) => (
+            <Skeleton key={width} className="h-9 shrink-0 rounded-lg" style={{ width: `${width * 4}px` }} />
+          ))}
+        </div>
+        <div className="mt-5 space-y-3">
           {Array.from({ length: 3 }, (_, index) => (
-            <Card key={index}>
-              <div className="flex items-center justify-between gap-4">
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-28" />
-                  <Skeleton className="h-4 w-36" />
-                </div>
-                <Skeleton className="h-7 w-40" />
+            <Card key={index} className="space-y-3">
+              <Skeleton className="h-5 w-40" />
+              <div className="flex items-center gap-3">
+                <Skeleton className="size-14 shrink-0" />
+                <Skeleton className="h-4 flex-1" />
               </div>
-              <div className="mt-5 h-20 rounded-xl bg-sunken motion-safe:animate-pulse" />
+              <Skeleton className="h-5 w-full" />
             </Card>
           ))}
         </div>

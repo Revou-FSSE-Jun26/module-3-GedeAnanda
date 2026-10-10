@@ -1,143 +1,167 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight } from "@phosphor-icons/react/ssr";
 import Card from "@/components/Card";
 import Container from "@/components/Container";
 import ProductCard from "@/components/ProductCard";
 import { getCategories, getProducts } from "@/lib/api";
+import { formatPrice, pluralize } from "@/lib/format";
+import { getProductImage } from "@/lib/images";
 
 export const metadata: Metadata = {
-  title: { absolute: "RevoShop | Everyday goods, honest prices" },
+  title: { absolute: "RevoShop | Shop electronics, fashion, home and books" },
 };
 
 export default async function HomePage() {
-  const [{ products }, categories] = await Promise.all([getProducts({ perPage: 5 }), getCategories()]);
+  const [{ products }, categories] = await Promise.all([getProducts(), getCategories()]);
   const categoryNames = new Map(categories.map((category) => [category.id, category.name]));
+  const featured = products.slice(0, 5);
+
+  const categoryCards = categories.map((category) => {
+    const items = products.filter((product) => product.category_id === category.id);
+    const photoProduct = items.find((product) => getProductImage(product));
+    return {
+      category,
+      count: items.length,
+      image: photoProduct ? getProductImage(photoProduct) : undefined,
+      fromPrice: items.length > 0 ? Math.min(...items.map((product) => product.price)) : null,
+    };
+  });
+  const [mainBanner, ...sideBanners] = categoryCards.filter((card) => card.image && card.fromPrice).slice(0, 3);
 
   return (
-    <>
-      <Container className="grid items-center gap-10 pt-8 pb-16 md:grid-cols-[1.1fr_1fr] md:pt-14 lg:gap-16">
-        <div className="motion-safe:animate-rise">
-          <h1 className="text-4xl leading-[1.05] font-semibold tracking-tighter text-balance text-ink sm:text-5xl lg:text-6xl">
-            Everyday goods, honest prices.
-          </h1>
-          <p className="mt-5 max-w-[44ch] text-base leading-relaxed text-muted sm:text-lg">
-            Browse the full RevoShop catalog, filter by category, and build your cart in a few clicks.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <Link
-              href="/products"
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-accent px-6 text-sm font-medium text-on-accent transition-[background-color,transform] duration-200 hover:bg-accent-hover active:scale-[0.98]"
-            >
-              Shop products
-              <ArrowRight size={16} weight="bold" aria-hidden />
-            </Link>
-            <Link
-              href="/categories"
-              className="inline-flex h-12 items-center rounded-full border border-line bg-surface px-6 text-sm font-medium text-ink transition-colors duration-200 hover:bg-sunken"
-            >
-              Browse categories
-            </Link>
-          </div>
-        </div>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-sunken md:aspect-[5/6] lg:aspect-[6/5]">
-          <Image
-            src="https://picsum.photos/seed/revoshop-storefront/1200/1000"
-            alt=""
-            fill
-            priority
-            sizes="(min-width: 768px) 45vw, 100vw"
-            className="object-cover"
-          />
-        </div>
-      </Container>
+    <div className="space-y-8 pb-12 sm:space-y-10">
+      <h1 className="sr-only">RevoShop online store</h1>
 
-      <Container className="pb-20">
-        <section aria-labelledby="featured-heading">
-          <div className="flex flex-wrap items-end justify-between gap-4">
-            <div>
-              <h2 id="featured-heading" className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-                Fresh in the catalog
-              </h2>
-              <p className="mt-2 text-sm text-muted">Five products, loaded live from the RevoShop API.</p>
-            </div>
+      {mainBanner && (
+        <Container className="pt-4 sm:pt-6">
+          <div className="grid gap-3 lg:grid-cols-[2fr_1fr]">
             <Link
-              href="/products"
-              className="group inline-flex items-center gap-1.5 text-sm font-medium text-accent"
+              href={`/products?category=${mainBanner.category.id}`}
+              className="group grid min-h-44 grid-cols-[1fr_38%] overflow-hidden rounded-lg bg-accent text-on-accent sm:min-h-64 sm:grid-cols-2"
             >
-              View all products
-              <ArrowRight
-                size={14}
-                weight="bold"
-                aria-hidden
-                className="transition-transform duration-200 group-hover:translate-x-0.5"
-              />
-            </Link>
-          </div>
-
-          {products.length === 0 && (
-            <Card className="mt-8 py-14 text-center">
-              <h3 className="font-medium text-ink">No products yet</h3>
-              <p className="mt-1 text-sm text-muted">Products created through the API will show up here.</p>
-            </Card>
-          )}
-
-          <ul className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
-            {products.map((product) => (
-              <li key={product.id} className="grid">
-                <ProductCard
-                  id={product.id}
-                  name={product.name}
-                  price={product.price}
-                  stock={product.stock}
-                  isActive={product.is_active}
-                  categoryName={
-                    product.category_id !== null ? categoryNames.get(product.category_id) : undefined
-                  }
-                  href={`/products/${product.id}`}
+              <div className="flex flex-col justify-center gap-1.5 p-4 sm:gap-2 sm:p-8">
+                <p className="text-xs font-semibold text-white/80 sm:text-sm">{mainBanner.category.name}</p>
+                <h2 className="max-w-[18ch] text-lg leading-tight font-bold sm:text-3xl">
+                  {mainBanner.category.description ?? `Shop ${mainBanner.category.name}`}
+                </h2>
+                <p className="text-sm text-white/80">From {formatPrice(mainBanner.fromPrice ?? 0)}</p>
+                <span className="mt-2 inline-flex h-9 w-fit items-center rounded-lg bg-white px-3 text-sm font-semibold text-accent transition-colors duration-150 group-hover:bg-accent-soft sm:h-10 sm:px-4">
+                  Shop {mainBanner.category.name}
+                </span>
+              </div>
+              <div className="relative">
+                <Image
+                  src={mainBanner.image ?? ""}
+                  alt=""
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 40vw, 50vw"
+                  className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                 />
-              </li>
-            ))}
-          </ul>
-        </section>
-      </Container>
+              </div>
+            </Link>
 
-      {categories.length > 0 && (
-        <section aria-labelledby="categories-heading" className="border-t border-line bg-surface">
-          <Container className="py-16">
-            <h2 id="categories-heading" className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-              Shop by category
-            </h2>
-            <ul className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              {categories.map((category) => (
-                <li key={category.id} className="grid">
+            {sideBanners.length > 0 && (
+              <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:grid-cols-1">
+                {sideBanners.map((banner) => (
+                  <Link
+                    key={banner.category.id}
+                    href={`/products?category=${banner.category.id}`}
+                    className="group flex items-center gap-2.5 rounded-lg bg-surface p-2.5 shadow-card ring-1 ring-line/70 transition-shadow duration-200 hover:shadow-lift sm:gap-4 sm:p-3"
+                  >
+                    <span className="relative size-14 shrink-0 overflow-hidden rounded-md bg-sunken sm:size-24">
+                      <Image src={banner.image ?? ""} alt="" fill sizes="96px" className="object-cover" />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-bold text-ink sm:text-base">{banner.category.name}</span>
+                      <span className="mt-0.5 block text-xs text-muted sm:text-sm">
+                        From {formatPrice(banner.fromPrice ?? 0)}
+                      </span>
+                      <span className="mt-1 hidden text-sm font-semibold text-accent group-hover:underline sm:mt-2 sm:block">
+                        Shop now
+                      </span>
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </Container>
+      )}
+
+      {categoryCards.length > 0 && (
+        <Container>
+          <section aria-labelledby="categories-heading">
+            <div className="flex items-center justify-between gap-3">
+              <h2 id="categories-heading" className="text-lg font-bold text-ink sm:text-xl">
+                Categories
+              </h2>
+              <Link href="/categories" className="text-sm font-semibold text-accent hover:underline">
+                See all
+              </Link>
+            </div>
+            <ul className="mt-3 grid grid-cols-4 gap-2 sm:gap-3">
+              {categoryCards.map(({ category, count, image }) => (
+                <li key={category.id}>
                   <Link
                     href={`/products?category=${category.id}`}
-                    className="group flex flex-col justify-between gap-8 rounded-2xl border border-line bg-canvas p-5 transition-colors duration-200 hover:border-ink/25"
+                    className="group flex flex-col items-center gap-2 rounded-lg bg-surface p-2 text-center shadow-card ring-1 ring-line/70 transition-shadow duration-200 hover:shadow-lift sm:flex-row sm:p-3 sm:text-left"
                   >
-                    <div>
-                      <p className="font-medium text-ink">{category.name}</p>
-                      <p className="mt-1 line-clamp-2 text-sm text-muted">
-                        {category.description ?? "Browse every product in this category."}
-                      </p>
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-accent">
-                      Browse
-                      <ArrowRight
-                        size={14}
-                        weight="bold"
-                        aria-hidden
-                        className="transition-transform duration-200 group-hover:translate-x-0.5"
-                      />
+                    <span className="relative size-14 shrink-0 overflow-hidden rounded-md bg-sunken sm:size-16">
+                      {image && <Image src={image} alt="" fill sizes="64px" className="object-cover" />}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-xs font-semibold text-ink sm:text-sm">{category.name}</span>
+                      <span className="hidden text-xs text-subtle sm:block">{pluralize(count, "product")}</span>
                     </span>
                   </Link>
                 </li>
               ))}
             </ul>
-          </Container>
-        </section>
+          </section>
+        </Container>
       )}
-    </>
+
+      <Container>
+        <section aria-labelledby="featured-heading">
+          <div className="flex items-center justify-between gap-3">
+            <h2 id="featured-heading" className="text-lg font-bold text-ink sm:text-xl">
+              New in the catalog
+            </h2>
+            <Link href="/products" className="text-sm font-semibold text-accent hover:underline">
+              See all
+            </Link>
+          </div>
+
+          {featured.length === 0 ? (
+            <Card className="mt-3 py-14 text-center">
+              <p className="font-semibold text-ink">No products yet</p>
+              <p className="mt-1 text-sm text-muted">Products created through the API will show up here.</p>
+            </Card>
+          ) : (
+            <ul className="mt-3 grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-5">
+              {featured.map((product, index) => (
+                <li key={product.id} className="grid">
+                  <ProductCard
+                    id={product.id}
+                    name={product.name}
+                    price={product.price}
+                    stock={product.stock}
+                    imageUrl={getProductImage(product)}
+                    isActive={product.is_active}
+                    categoryName={
+                      product.category_id !== null ? categoryNames.get(product.category_id) : undefined
+                    }
+                    href={`/products/${product.id}`}
+                    priority={index < 3}
+                  />
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </Container>
+    </div>
   );
 }

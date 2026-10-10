@@ -3,25 +3,28 @@ import { LoadingLabel, ProductCardSkeleton, Skeleton } from "@/components/Skelet
 
 export default function HomeLoading() {
   return (
-    <div role="status">
+    <div role="status" className="space-y-8 pb-12 sm:space-y-10">
       <LoadingLabel>Loading the home page</LoadingLabel>
-      <Container className="grid items-center gap-10 pt-8 pb-16 md:grid-cols-[1.1fr_1fr] md:pt-14 lg:gap-16">
-        <div className="space-y-4">
-          <Skeleton className="h-12 w-11/12 sm:h-14" />
-          <Skeleton className="h-12 w-2/3 sm:h-14" />
-          <Skeleton className="mt-6 h-4 w-4/5" />
-          <Skeleton className="h-4 w-3/5" />
-          <div className="flex gap-3 pt-6">
-            <Skeleton className="h-12 w-40" />
-            <Skeleton className="h-12 w-44" />
+      <Container className="pt-4 sm:pt-6">
+        <div className="grid gap-3 lg:grid-cols-[2fr_1fr]">
+          <Skeleton className="h-48 rounded-lg sm:h-64" />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+            <Skeleton className="h-28 rounded-lg" />
+            <Skeleton className="h-28 rounded-lg" />
           </div>
         </div>
-        <div className="aspect-[4/3] rounded-2xl bg-sunken motion-safe:animate-pulse md:aspect-[5/6] lg:aspect-[6/5]" />
       </Container>
-      <Container className="pb-20">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="mt-3 h-4 w-72" />
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-3 lg:grid-cols-5">
+      <Container>
+        <Skeleton className="h-6 w-32" />
+        <div className="mt-3 grid grid-cols-4 gap-2 sm:gap-3">
+          {Array.from({ length: 4 }, (_, index) => (
+            <Skeleton key={index} className="h-24 rounded-lg" />
+          ))}
+        </div>
+      </Container>
+      <Container>
+        <Skeleton className="h-6 w-48" />
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 lg:grid-cols-5">
           {Array.from({ length: 5 }, (_, index) => (
             <ProductCardSkeleton key={index} />
           ))}
