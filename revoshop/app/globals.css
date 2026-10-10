@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+/*
+  Design tokens. One neutral family (zinc) and one accent (emerald).
+  Shape rule: controls (buttons, inputs, chips) are pills, surfaces and images use 16px.
+*/
+@theme {
+  --color-canvas: #fafafa;
+  --color-surface: #ffffff;
+  --color-sunken: #f4f4f5;
+  --color-line: #e4e4e7;
+  --color-ink: #18181b;
+  --color-muted: #52525b;
+  --color-subtle: #71717a;
+  --color-accent: #047857;
+  --color-accent-hover: #065f46;
+  --color-on-accent: #ffffff;
+  --color-accent-soft: #ecfdf5;
+  --color-on-accent-soft: #065f46;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
+
+  --shadow-card: 0 1px 2px rgb(24 24 27 / 0.04), 0 12px 32px -16px rgb(24 24 27 / 0.14);
+
+  --animate-rise: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-canvas: #0c0c0e;
+    --color-surface: #151518;
+    --color-sunken: #1e1e22;
+    --color-line: #2a2a30;
+    --color-ink: #f4f4f5;
+    --color-muted: #a1a1aa;
+    --color-subtle: #8b8b94;
+    --color-accent: #34d399;
+    --color-accent-hover: #6ee7b7;
+    --color-on-accent: #04261a;
+    --color-accent-soft: rgb(52 211 153 / 0.12);
+    --color-on-accent-soft: #6ee7b7;
+    --color-danger: #f87171;
+    --color-danger-soft: rgb(248 113 113 / 0.12);
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -16px rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
