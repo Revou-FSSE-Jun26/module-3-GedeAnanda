@@ -28,3 +28,8 @@ export async function request<T>(path: string, init?: RequestInit): Promise<ApiR
 
   return body as ApiResponse<T>;
 }
+
+export function errorMessage(error: unknown): string {
+  if (error instanceof ApiError) return error.message;
+  return "Could not reach the server. Check your connection and try again.";
+}

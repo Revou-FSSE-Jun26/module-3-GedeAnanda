@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { X } from "@phosphor-icons/react";
+import { Field, inputClass } from "./FormField";
 import type { Category, Product } from "@/lib/types";
 
 interface AddProductFormProps {
   categories: Category[];
   onAddProduct: (product: Product) => void;
-  
   onCancel?: () => void;
 }
 
@@ -42,45 +42,6 @@ function validate(values: FormValues): FormErrors {
   if (!values.categoryId) errors.categoryId = "Choose a category.";
 
   return errors;
-}
-
-const inputBase =
-  "h-10 w-full rounded-lg border bg-surface px-3 text-sm text-ink transition-colors duration-150 placeholder:text-subtle focus:outline-none focus:ring-3";
-
-function inputClass(hasError: boolean) {
-  return `${inputBase} ${
-    hasError
-      ? "border-danger focus:border-danger focus:ring-danger/15"
-      : "border-line hover:border-subtle/60 focus:border-accent focus:ring-accent/15"
-  }`;
-}
-
-interface FieldProps {
-  id: keyof FormValues;
-  label: string;
-  error?: string;
-  hint?: string;
-  children: ReactNode;
-}
-
-function Field({ id, label, error, hint, children }: FieldProps) {
-  return (
-    <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-sm font-medium text-ink">
-        {label}
-      </label>
-      {children}
-      {error ? (
-        <p id={`${id}-message`} className="text-sm text-danger">
-          {error}
-        </p>
-      ) : hint ? (
-        <p id={`${id}-message`} className="text-xs text-subtle">
-          {hint}
-        </p>
-      ) : null}
-    </div>
-  );
 }
 
 export default function AddProductForm({ categories, onAddProduct, onCancel }: AddProductFormProps) {

@@ -67,3 +67,19 @@ export interface CartItem {
   stock: number;
   imageUrl?: string;
 }
+
+export type Role = "customer" | "admin";
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  role: Role;
+  created_at: string | null;
+}
+
+export interface Session {
+  user: User;
+  accessToken: string;
+  refreshToken: string;
+}

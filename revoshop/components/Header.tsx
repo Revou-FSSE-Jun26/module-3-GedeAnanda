@@ -3,6 +3,7 @@ import Logo from "./Logo";
 import NavLinks, { NavLinksFallback } from "./NavLinks";
 import HeaderSearch from "./HeaderSearch";
 import CartButton from "./CartButton";
+import UserMenu from "./auth/UserMenu";
 
 export default function Header() {
   return (
@@ -10,8 +11,11 @@ export default function Header() {
       <div className="mx-auto flex h-14 max-w-7xl items-center gap-3 px-4 sm:h-16 sm:gap-6 sm:px-6 lg:px-8">
         <Logo />
         <HeaderSearch />
-        <div className="hidden md:block">
-          <CartButton />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <div className="hidden md:block">
+            <CartButton />
+          </div>
+          <UserMenu />
         </div>
       </div>
       <nav aria-label="Main" className="hidden border-t border-line md:block">
