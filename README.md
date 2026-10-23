@@ -25,7 +25,8 @@ Checkpoint 1 is documented in [CHECKPOINT-1.md](CHECKPOINT-1.md).
 
 ### Everyone
 - Home page with category banners, category tiles and the newest products
-- Product listing with live search, category filter, sort, and an "in stock only" toggle
+- Live search in the header: typing on any page opens the matching products, no Enter needed
+- Product listing with category filter, sort, and an "in stock only" toggle
 - Product detail page with stock status, related products and a dynamic page title
 - Category listing
 - Cart that works before logging in and survives a page refresh
@@ -131,12 +132,12 @@ If a server is already running on port 3000, Playwright reuses it. To test a dep
 PLAYWRIGHT_BASE_URL=https://your-revoshop.vercel.app npm run test:e2e
 ```
 
-The suite has 14 tests in `revoshop/e2e/`:
+The suite has 15 tests in `revoshop/e2e/`:
 
 | File | What it covers |
 |---|---|
 | `auth.spec.ts` | Register validation; register, auto login, username kept after refresh, log out; invalid login error; customer goes to `/`, admin goes to `/dashboard`; logged-out and customer redirects on protected pages |
-| `shopping.spec.ts` | Empty cart state and disabled checkout; full journey: product list → add to cart → cart totals → refresh → checkout → order history → order detail |
+| `shopping.spec.ts` | Live header search from the home page; empty cart state and disabled checkout; full journey: product list → add to cart → cart totals → refresh → checkout → order history → order detail |
 | `admin.spec.ts` | Product create, edit and delete; product delete guard; category create (with validation and duplicate name), edit and delete; category delete guard; read-only orders overview |
 
 The tests run against the real API, so they clean up after themselves: products and categories they
@@ -219,7 +220,7 @@ Taken locally from a production build (`npm run build && npm run start`) against
 ### Product listing
 ![Product listing with the category sidebar](screenshots/revoshop/products.png)
 
-Live search filters as you type and writes `?search=` to the URL:
+The header search is live on every page: it filters as you type and writes `?search=` to the URL:
 
 ![Live search for "mo"](screenshots/revoshop/live-search.png)
 
@@ -276,7 +277,7 @@ The username stays in the header after a refresh; the menu links to orders and l
 ![Read-only overview of all orders](screenshots/revoshop/dashboard-orders.png)
 
 ### Playwright report
-![Playwright HTML report with 14 passing tests](screenshots/revoshop/e2e-report.png)
+![Playwright HTML report with 15 passing tests](screenshots/revoshop/e2e-report.png)
 
 ## Notes
 
