@@ -1,4 +1,7 @@
+"use client";
+
 import Image from "next/image";
+import { useState } from "react";
 
 interface ProductImageProps {
   src?: string;
@@ -17,7 +20,10 @@ export default function ProductImage({
   dimmed = false,
   className = "",
 }: ProductImageProps) {
-  if (!src) {
+  // Broken link
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
+
+  if (!src || failedSrc === src) {
     return (
       <div
         role="img"
@@ -35,7 +41,8 @@ export default function ProductImage({
       alt={alt}
       fill
       sizes={sizes}
-      priority={priority}
+      loading={priority ? "eager" : "lazy"}
+      onError={() => setFailedSrc(src)}
       className={`object-cover ${dimmed ? "opacity-50 grayscale" : ""} ${className}`}
     />
   );

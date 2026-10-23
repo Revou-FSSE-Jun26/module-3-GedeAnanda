@@ -43,6 +43,23 @@ function isHttpsUrl(value: string): boolean {
   }
 }
 
+// Real image check
+function canLoadImage(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const image = new window.Image();
+    const timer = setTimeout(() => resolve(false), 10_000);
+    image.onload = () => {
+      clearTimeout(timer);
+      resolve(true);
+    };
+    image.onerror = () => {
+      clearTimeout(timer);
+      resolve(false);
+    };
+    image.src = url;
+  });
+}
+
 function validate(values: FormValues): FormErrors {
   const errors: FormErrors = {};
 
@@ -122,6 +139,15 @@ export default function ProductForm({
     }
 
     setPending(true);
+    const imageUrl = values.imageUrl.trim();
+    if (imageUrl && !(await canLoadImage(imageUrl))) {
+      setErrors({ imageUrl: "This link does not open an image. Right-click the photo and choose Copy image address." });
+      const field = form.elements.namedItem("imageUrl");
+      if (field instanceof HTMLElement) field.focus();
+      setPending(false);
+      return;
+    }
+
     try {
       await onSubmit({
         name: values.name.trim(),
@@ -129,7 +155,7 @@ export default function ProductForm({
         stock: Number(values.stock),
         category_id: Number(values.categoryId),
         description: values.description.trim() || null,
-        image_url: values.imageUrl.trim() || null,
+        image_url: imageUrl || null,
         is_active: values.isActive,
       });
     } catch (error) {
