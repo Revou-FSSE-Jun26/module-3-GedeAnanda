@@ -5,6 +5,7 @@ the Flask API from Module 2: shoppers browse the catalog, register, log in, fill
 orders, while admins manage products and categories and see every order from a dashboard. The app is
 covered by a Playwright end-to-end suite.
 
+- **Live app:** https://revoshop-dun.vercel.app
 - **API:** https://module-2-gede-ananda.vercel.app
 - **Backend repo:** https://github.com/Revou-FSSE-Jun26/module-2-GedeAnanda
 
@@ -126,10 +127,10 @@ npm run test:e2e                  # builds the app, starts it on :3000 and runs 
 npm run test:e2e:report           # opens the HTML report
 ```
 
-If a server is already running on port 3000, Playwright reuses it. To test a deployed copy:
+If a server is already running on port 3000, Playwright reuses it. To test the deployed app on Vercel:
 
 ```bash
-PLAYWRIGHT_BASE_URL=https://your-revoshop.vercel.app npm run test:e2e
+PLAYWRIGHT_BASE_URL=https://revoshop-dun.vercel.app npm run test:e2e
 ```
 
 The suite has 15 tests in `revoshop/e2e/`:
@@ -277,6 +278,7 @@ The username stays in the header after a refresh; the menu links to orders and l
 ![Read-only overview of all orders](screenshots/revoshop/dashboard-orders.png)
 
 ### Playwright report
+All 15 tests passing against the live app at https://revoshop-dun.vercel.app.
 ![Playwright HTML report with 15 passing tests](screenshots/revoshop/e2e-report.png)
 
 ## Notes
@@ -285,5 +287,5 @@ The username stays in the header after a refresh; the menu links to orders and l
   the product form). The seeded products have no `image_url`, so `lib/images.ts` matches them by name
   to free-license photos from [Unsplash](https://unsplash.com).
 - Prices are shown in Indonesian rupiah.
-- Deploying to Vercel and running the suite against the live URL is part of the final Module 3
-  submission.
+- The app is deployed on Vercel from the `revoshop/` folder, with `NEXT_PUBLIC_API_BASE_URL` set in
+  the Vercel project settings. The Playwright suite passes against the live URL.
