@@ -16,21 +16,31 @@ interface FormValues {
   stock: string;
   categoryId: string;
   description: string;
+  imageUrl: string;
   isActive: boolean;
 }
 
 type FormErrors = Partial<Record<keyof FormValues, string>>;
 
 function toValues(product?: Product): FormValues {
-  if (!product) return { name: "", price: "", stock: "1", categoryId: "", description: "", isActive: true };
+  if (!product) return { name: "", price: "", stock: "1", categoryId: "", description: "", imageUrl: "", isActive: true };
   return {
     name: product.name,
     price: String(product.price),
     stock: String(product.stock),
     categoryId: product.category_id ? String(product.category_id) : "",
     description: product.description ?? "",
+    imageUrl: product.image_url ?? "",
     isActive: product.is_active,
   };
+}
+
+function isHttpsUrl(value: string): boolean {
+  try {
+    return new URL(value).protocol === "https:";
+  } catch {
+    return false;
+  }
 }
 
 function validate(values: FormValues): FormErrors {
@@ -52,6 +62,10 @@ function validate(values: FormValues): FormErrors {
   if (!values.categoryId) errors.categoryId = "Choose a category.";
 
   if (values.description.trim().length > 500) errors.description = "Keep it under 500 characters.";
+
+  const imageUrl = values.imageUrl.trim();
+  if (imageUrl && !isHttpsUrl(imageUrl)) errors.imageUrl = "Use a full https:// link to an image.";
+  else if (imageUrl.length > 500) errors.imageUrl = "Keep the link under 500 characters.";
 
   return errors;
 }
@@ -115,6 +129,7 @@ export default function ProductForm({
         stock: Number(values.stock),
         category_id: Number(values.categoryId),
         description: values.description.trim() || null,
+        image_url: values.imageUrl.trim() || null,
         is_active: values.isActive,
       });
     } catch (error) {
@@ -230,6 +245,23 @@ export default function ProductForm({
               aria-invalid={Boolean(errors.description)}
               aria-describedby={messageId("description", errors.description, "hint")}
               className={textareaClass(Boolean(errors.description))}
+            />
+          </Field>
+        </div>
+
+        <div className="sm:col-span-2">
+          <Field id="imageUrl" label="Image URL" error={errors.imageUrl} hint="Optional. A direct https:// link to a photo.">
+            <input
+              id="imageUrl"
+              name="imageUrl"
+              type="url"
+              inputMode="url"
+              value={values.imageUrl}
+              onChange={handleChange}
+              placeholder="https://images.unsplash.com/..."
+              aria-invalid={Boolean(errors.imageUrl)}
+              aria-describedby={messageId("imageUrl", errors.imageUrl, "hint")}
+              className={inputClass(Boolean(errors.imageUrl))}
             />
           </Field>
         </div>

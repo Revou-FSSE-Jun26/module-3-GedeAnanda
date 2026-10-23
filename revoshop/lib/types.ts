@@ -6,7 +6,6 @@ export interface Product {
   stock: number;
   description: string | null;
   is_active: boolean;
-  // Not in API yet
   image_url?: string | null;
   created_at: string | null;
   updated_at: string | null;

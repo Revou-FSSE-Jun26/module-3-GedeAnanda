@@ -109,6 +109,7 @@ export interface ProductInput {
   stock: number;
   category_id: number;
   description: string | null;
+  image_url: string | null;
   is_active: boolean;
 }
 
