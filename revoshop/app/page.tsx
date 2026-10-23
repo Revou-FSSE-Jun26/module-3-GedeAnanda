@@ -59,7 +59,8 @@ export default async function HomePage() {
                   src={mainBanner.image ?? ""}
                   alt=""
                   fill
-                  priority
+                  loading="eager"
+                  fetchPriority="high"
                   sizes="(min-width: 1024px) 40vw, 50vw"
                   className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.03]"
                 />
@@ -75,7 +76,7 @@ export default async function HomePage() {
                     className="group flex items-center gap-2.5 rounded-lg bg-surface p-2.5 shadow-card ring-1 ring-line/70 transition-shadow duration-200 hover:shadow-lift sm:gap-4 sm:p-3"
                   >
                     <span className="relative size-14 shrink-0 overflow-hidden rounded-md bg-sunken sm:size-24">
-                      <Image src={banner.image ?? ""} alt="" fill sizes="96px" className="object-cover" />
+                      <Image src={banner.image ?? ""} alt="" fill loading="eager" sizes="96px" className="object-cover" />
                     </span>
                     <span className="min-w-0">
                       <span className="block truncate text-sm font-bold text-ink sm:text-base">{banner.category.name}</span>
@@ -113,7 +114,7 @@ export default async function HomePage() {
                     className="group flex flex-col items-center gap-2 rounded-lg bg-surface p-2 text-center shadow-card ring-1 ring-line/70 transition-shadow duration-200 hover:shadow-lift sm:flex-row sm:p-3 sm:text-left"
                   >
                     <span className="relative size-14 shrink-0 overflow-hidden rounded-md bg-sunken sm:size-16">
-                      {image && <Image src={image} alt="" fill sizes="64px" className="object-cover" />}
+                      {image && <Image src={image} alt="" fill loading="eager" sizes="64px" className="object-cover" />}
                     </span>
                     <span className="min-w-0">
                       <span className="block truncate text-xs font-semibold text-ink sm:text-sm">{category.name}</span>
