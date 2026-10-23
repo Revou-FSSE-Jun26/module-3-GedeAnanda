@@ -41,26 +41,31 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const lastPushed = useRef<string | null>(null);
 
   const navigate = useCallback(
-    (search: string, category: number | null, fromCatalog: boolean) => {
+    (search: string, category: number | null, fromCatalog: boolean, replace = false) => {
       lastPushed.current = search;
       const params = new URLSearchParams();
       if (search) params.set("search", search);
       if (category) params.set("category", String(category));
       const queryString = params.toString();
+      const href = queryString ? `/products?${queryString}` : "/products";
 
       startTransition(() => {
         setOptimisticCategory(category);
-        router.push(queryString ? `/products?${queryString}` : "/products", { scroll: !fromCatalog });
+        if (replace) router.replace(href, { scroll: !fromCatalog });
+        else router.push(href, { scroll: !fromCatalog });
       });
     },
     [router, setOptimisticCategory],
   );
 
-  // Debounced
+  // Debounced, any page
   const pushTypedSearch = useEffectEvent(() => {
     const search = query.trim();
-    if (!isOnCatalog || search === lastPushed.current) return;
-    navigate(search, categoryId, true);
+    if (search === lastPushed.current) return;
+    if (!isOnCatalog && !search) return;
+    // One history entry
+    const replace = isOnCatalog || lastPushed.current !== null;
+    navigate(search, isOnCatalog ? categoryId : null, isOnCatalog, replace);
   });
 
   useEffect(() => {

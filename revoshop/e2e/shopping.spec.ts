@@ -8,7 +8,19 @@ import {
   loginViaUi,
   newCustomer,
   registerViaApi,
+  waitForGuestHeader,
 } from "./helpers";
+
+test("header search filters while typing from any page", async ({ page }) => {
+  await page.goto("/");
+  await waitForGuestHeader(page);
+
+  await page.getByLabel("Search products").pressSequentially("mouse", { delay: 50 });
+
+  await expect(page).toHaveURL(/\/products\?search=mouse$/);
+  await expect(page.getByRole("heading", { name: 'Results for "mouse"' })).toBeVisible();
+  await expect(page.getByLabel("Search products")).toHaveValue("mouse");
+});
 
 test("empty cart shows an empty state and a disabled checkout button", async ({ page }) => {
   await page.goto("/cart");
