@@ -3,8 +3,6 @@ import { ApiError, request } from "./http";
 import type {
   Category,
   CategoryWithProducts,
-  Order,
-  OrderStatus,
   Pagination,
   Product,
 } from "./types";
@@ -54,37 +52,4 @@ export async function getCategory(id: number): Promise<CategoryWithProducts | nu
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;
   }
-}
-
-async function getAccessToken(): Promise<string | null> {
-  const email = process.env.API_AUTH_EMAIL;
-  const password = process.env.API_AUTH_PASSWORD;
-  if (!email || !password) return null;
-
-  const res = await request<{ access_token: string }>("/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
-  return res.data.access_token;
-}
-
-// null = no creds
-export async function getOrders(status?: OrderStatus): Promise<Order[] | null> {
-  const token = await getAccessToken();
-  if (!token) return null;
-
-  const params = new URLSearchParams({ per_page: "20" });
-  if (status) params.set("status", status);
-
-  const headers = { Authorization: `Bearer ${token}` };
-  const list = await request<Order[]>(`/orders?${params}`, { headers });
-
-  // Need line items
-  return Promise.all(
-    list.data.map(async (order) => {
-      const res = await request<Order>(`/orders/${order.id}`, { headers });
-      return res.data;
-    }),
-  );
 }

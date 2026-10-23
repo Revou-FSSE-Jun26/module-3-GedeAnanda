@@ -11,7 +11,7 @@ const groups = [
   },
   {
     title: "Your account",
-    links: [{ href: "/orders", label: "Order history" }],
+    links: [{ href: "/orders", label: "My orders" }],
   },
 ];
 

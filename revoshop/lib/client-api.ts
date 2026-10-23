@@ -1,6 +1,6 @@
 import { ApiError, request } from "./http";
 import { sessionStore } from "./session";
-import type { Session, User } from "./types";
+import type { Order, Session, User } from "./types";
 
 // Browser only
 
@@ -67,5 +67,31 @@ export async function authRequest<T>(path: string, method = "GET", body?: unknow
     const token = await refreshAccessToken(session);
     if (!token) throw new ApiError("Your session expired. Log in again.", 401);
     return send(token);
+  }
+}
+
+export interface OrderItemInput {
+  product_id: number;
+  quantity: number;
+}
+
+export async function createOrder(items: OrderItemInput[]): Promise<Order> {
+  const res = await authRequest<Order>("/orders", "POST", { items });
+  return res.data;
+}
+
+// Admin gets all
+export async function getOrders(): Promise<Order[]> {
+  const res = await authRequest<Order[]>("/orders?per_page=100");
+  return res.data;
+}
+
+export async function getOrder(id: number): Promise<Order | null> {
+  try {
+    const res = await authRequest<Order>(`/orders/${id}`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) return null;
+    throw error;
   }
 }

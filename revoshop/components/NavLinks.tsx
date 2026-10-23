@@ -7,7 +7,7 @@ export const navLinks = [
   { href: "/", label: "Home" },
   { href: "/products", label: "All products" },
   { href: "/categories", label: "Categories" },
-  { href: "/orders", label: "Order history" },
+  { href: "/orders", label: "My orders" },
 ];
 
 export function isActivePath(pathname: string | null, href: string): boolean {
