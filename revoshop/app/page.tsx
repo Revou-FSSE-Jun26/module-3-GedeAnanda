@@ -15,7 +15,11 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const [{ products }, categories] = await Promise.all([getProducts(), getCategories()]);
   const categoryNames = new Map(categories.map((category) => [category.id, category.name]));
-  const featured = products.slice(0, 5);
+  // Newest first
+  const featured = products
+    .filter((product) => product.is_active)
+    .sort((a, b) => b.id - a.id)
+    .slice(0, 5);
 
   const categoryCards = categories.map((category) => {
     const items = products.filter((product) => product.category_id === category.id);
