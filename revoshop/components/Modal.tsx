@@ -13,14 +13,20 @@ export default function Modal({ labelledBy, onClose, children }: ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    dialogRef.current?.showModal();
+    const dialog = dialogRef.current;
+    dialog?.showModal();
+    // Hidden page
+    return () => dialog?.close();
   }, []);
 
   return (
     <dialog
       ref={dialogRef}
       aria-labelledby={labelledBy}
-      onClose={onClose}
+      onClose={() => {
+        // Ignore stale events
+        if (!dialogRef.current?.open) onClose();
+      }}
       onClick={(event) => {
         // Backdrop click
         if (event.target === event.currentTarget) dialogRef.current?.close();

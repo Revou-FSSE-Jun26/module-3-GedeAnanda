@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useLayoutEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import PasswordInput from "./PasswordInput";
 import FormAlert from "../FormAlert";
@@ -50,6 +50,15 @@ export default function RegisterForm() {
   const [submitted, setSubmitted] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  // Clear on leave
+  useLayoutEffect(
+    () => () => {
+      setValues((current) => ({ ...current, password: "", confirmPassword: "" }));
+      setFormError(null);
+    },
+    [],
+  );
 
   function handleChange(event: ChangeEvent<HTMLInputElement>) {
     const next = { ...values, [event.target.name]: event.target.value };

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useLayoutEffect, useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import Card from "../Card";
 import FormAlert from "../FormAlert";
@@ -23,6 +23,16 @@ export default function CheckoutView() {
   const [pending, setPending] = useState(false);
   const [placed, setPlaced] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Reset when hidden
+  useLayoutEffect(
+    () => () => {
+      setPlaced(false);
+      setPending(false);
+      setError(null);
+    },
+    [],
+  );
 
   if (!ready) return <Skeleton className="h-64 rounded-lg" />;
 

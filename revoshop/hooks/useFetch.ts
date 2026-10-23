@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useState } from "react";
+import { useEffect, useEffectEvent, useLayoutEffect, useState } from "react";
 import { errorMessage } from "@/lib/http";
 
 interface FetchResult<T> {
@@ -24,6 +24,9 @@ export function useFetch<T>(key: string, load: () => Promise<T>) {
       active = false;
     };
   }, [currentKey]);
+
+  // Fresh data on return
+  useLayoutEffect(() => () => setResult(null), []);
 
   const current = result?.key === currentKey ? result : null;
 
