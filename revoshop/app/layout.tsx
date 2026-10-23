@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import { Toaster } from "react-hot-toast";
+import AppToaster from "@/components/AppToaster";
 import BottomNav from "@/components/BottomNav";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
@@ -39,14 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </CatalogProvider>
           </CartProvider>
         </AuthProvider>
-        <Toaster
-          position="top-center"
-          toastOptions={{
-            style: { fontSize: "14px", color: "var(--color-ink)", boxShadow: "var(--shadow-lift)" },
-            success: { iconTheme: { primary: "var(--color-success)", secondary: "#fff" } },
-            error: { iconTheme: { primary: "var(--color-danger)", secondary: "#fff" } },
-          }}
-        />
+        <AppToaster />
       </body>
     </html>
   );
