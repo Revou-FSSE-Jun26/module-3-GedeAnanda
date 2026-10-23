@@ -6,7 +6,7 @@ import Card from "./Card";
 import ProductImage from "./ProductImage";
 import QuantityCounter from "./QuantityCounter";
 import StockLabel from "./StockLabel";
-import { useCart } from "@/hooks/useCart";
+import AddToCartButton from "./cart/AddToCartButton";
 import { formatPrice } from "@/lib/format";
 
 export interface ProductCardProps {
@@ -34,17 +34,8 @@ export default function ProductCard({
   isNew = false,
   priority = false,
 }: ProductCardProps) {
-  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
-  const [justAdded, setJustAdded] = useState(false);
   const inStock = isActive && stock > 0;
-
-  function handleAddToCart() {
-    addItem({ productId: id, name, price, quantity, stock, imageUrl });
-    setQuantity(1);
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1200);
-  }
 
   const image = (
     <div className="relative aspect-square overflow-hidden rounded-t-lg bg-sunken">
@@ -95,35 +86,23 @@ export default function ProductCard({
           </span>
         )}
 
-        <div className="mt-auto pt-3">
-          {inStock ? (
-            <div className="flex items-center gap-2">
-              <QuantityCounter size="sm" value={quantity} onChange={setQuantity} max={stock} />
-              <button
-                type="button"
-                onClick={handleAddToCart}
-                aria-label={`Add ${quantity} ${name} to cart`}
-                className="h-8 min-w-0 flex-1 rounded-lg bg-accent px-2 text-sm font-semibold whitespace-nowrap text-on-accent transition-[background-color,transform] duration-150 hover:bg-accent-hover active:scale-[0.97]"
-              >
-                {justAdded ? (
-                  "Added"
-                ) : (
-                  <>
-                    <span className="@[13rem]:hidden">Add</span>
-                    <span className="hidden @[13rem]:inline">Add to cart</span>
-                  </>
-                )}
-              </button>
-            </div>
-          ) : (
-            <button
-              type="button"
-              disabled
-              className="h-8 w-full cursor-not-allowed rounded-lg bg-sunken text-sm font-semibold text-subtle"
-            >
-              {isActive ? "Out of stock" : "Unavailable"}
-            </button>
-          )}
+        <div className="mt-auto flex items-center gap-2 pt-3">
+          {inStock && <QuantityCounter size="sm" value={quantity} onChange={setQuantity} max={stock} />}
+          <AddToCartButton
+            productId={id}
+            name={name}
+            price={price}
+            stock={stock}
+            imageUrl={imageUrl}
+            isActive={isActive}
+            quantity={quantity}
+            onAdded={() => setQuantity(1)}
+            ariaLabel={`Add ${quantity} ${name} to cart`}
+            className="h-8 min-w-0 flex-1 px-2"
+          >
+            <span className="@[13rem]:hidden">Add</span>
+            <span className="hidden @[13rem]:inline">Add to cart</span>
+          </AddToCartButton>
         </div>
       </div>
     </Card>

@@ -17,7 +17,7 @@ const itemClass = "flex flex-1 flex-col items-center justify-center gap-0.5 text
 
 export default function BottomNav() {
   const pathname = usePathname();
-  const { itemCount, openCart } = useCart();
+  const { itemCount } = useCart();
 
   if (pathname.startsWith("/products/")) return null;
 
@@ -43,9 +43,13 @@ export default function BottomNav() {
           );
         })}
         <li className="flex flex-1">
-          <button type="button" onClick={openCart} className={`${itemClass} relative text-subtle`}>
+          <Link
+            href="/cart"
+            aria-current={pathname === "/cart" ? "page" : undefined}
+            className={`${itemClass} ${pathname === "/cart" ? "font-semibold text-accent" : "text-subtle"}`}
+          >
             <span className="relative">
-              <ShoppingCartSimple size={24} aria-hidden />
+              <ShoppingCartSimple size={24} weight={pathname === "/cart" ? "fill" : "regular"} aria-hidden />
               {itemCount > 0 && (
                 <span className="absolute -top-1.5 -right-2.5 grid h-4 min-w-4 place-items-center rounded-full bg-danger px-1 text-[10px] font-bold text-white tabular-nums">
                   {itemCount > 99 ? "99+" : itemCount}
@@ -53,7 +57,7 @@ export default function BottomNav() {
               )}
             </span>
             Cart
-          </button>
+          </Link>
         </li>
       </ul>
     </nav>

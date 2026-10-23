@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "react-hot-toast";
-import AddedToast from "@/components/AddedToast";
 import BottomNav from "@/components/BottomNav";
-import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import { AuthProvider } from "@/context/AuthContext";
@@ -38,8 +36,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <Suspense fallback={null}>
                 <BottomNav />
               </Suspense>
-              <CartDrawer />
-              <AddedToast />
             </CatalogProvider>
           </CartProvider>
         </AuthProvider>

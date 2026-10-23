@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import QuantityCounter from "./QuantityCounter";
-import { useCart } from "@/hooks/useCart";
+import AddToCartButton from "./cart/AddToCartButton";
 import { formatPrice } from "@/lib/format";
 
 interface AddToCartPanelProps {
@@ -22,33 +22,22 @@ export default function AddToCartPanel({
   imageUrl,
   isActive = true,
 }: AddToCartPanelProps) {
-  const { addItem } = useCart();
   const [quantity, setQuantity] = useState(1);
   const inStock = isActive && stock > 0;
 
-  function handleAddToCart() {
-    addItem({ productId: id, name, price, quantity, stock, imageUrl });
-    setQuantity(1);
-  }
-
-  const addButton = (className: string) =>
-    inStock ? (
-      <button
-        type="button"
-        onClick={handleAddToCart}
-        className={`rounded-lg bg-accent text-sm font-semibold text-on-accent transition-[background-color,transform] duration-150 hover:bg-accent-hover active:scale-[0.98] ${className}`}
-      >
-        Add to cart
-      </button>
-    ) : (
-      <button
-        type="button"
-        disabled
-        className={`cursor-not-allowed rounded-lg bg-sunken text-sm font-semibold text-subtle ${className}`}
-      >
-        {isActive ? "Out of stock" : "Unavailable"}
-      </button>
-    );
+  const addButton = (className: string) => (
+    <AddToCartButton
+      productId={id}
+      name={name}
+      price={price}
+      stock={stock}
+      imageUrl={imageUrl}
+      isActive={isActive}
+      quantity={quantity}
+      onAdded={() => setQuantity(1)}
+      className={className}
+    />
+  );
 
   return (
     <>

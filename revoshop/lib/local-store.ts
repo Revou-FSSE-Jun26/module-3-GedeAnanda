@@ -1,5 +1,5 @@
 // localStorage store for useSyncExternalStore
-export function createLocalStore<T>(key: string, fallback: T) {
+export function createLocalStore<T>(key: string, fallback: T, isValid: (value: unknown) => boolean = () => true) {
   const listeners = new Set<() => void>();
   let value = fallback;
   let loaded = false;
@@ -9,7 +9,8 @@ export function createLocalStore<T>(key: string, fallback: T) {
       loaded = true;
       try {
         const raw = localStorage.getItem(key);
-        value = raw ? (JSON.parse(raw) as T) : fallback;
+        const parsed: unknown = raw ? JSON.parse(raw) : fallback;
+        value = isValid(parsed) ? (parsed as T) : fallback;
       } catch {
         value = fallback;
       }

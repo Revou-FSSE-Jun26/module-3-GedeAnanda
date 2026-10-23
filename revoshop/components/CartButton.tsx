@@ -1,16 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { ShoppingCartSimple } from "@phosphor-icons/react";
 import { useCart } from "@/hooks/useCart";
 
 export default function CartButton() {
-  const { itemCount, openCart } = useCart();
+  const { itemCount } = useCart();
 
   return (
-    <button
-      type="button"
-      onClick={openCart}
-      aria-label={`Open cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}`}
+    <Link
+      href="/cart"
+      aria-label={`Cart, ${itemCount} ${itemCount === 1 ? "item" : "items"}`}
       className="relative grid size-10 shrink-0 place-items-center rounded-lg text-ink transition-colors duration-150 hover:bg-sunken"
     >
       <ShoppingCartSimple size={24} aria-hidden />
@@ -19,6 +19,6 @@ export default function CartButton() {
           {itemCount > 99 ? "99+" : itemCount}
         </span>
       )}
-    </button>
+    </Link>
   );
 }
