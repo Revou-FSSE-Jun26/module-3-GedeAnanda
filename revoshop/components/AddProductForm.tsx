@@ -7,6 +7,7 @@ import type { Category, Product } from "@/lib/types";
 interface AddProductFormProps {
   categories: Category[];
   onAddProduct: (product: Product) => void;
+  
   onCancel?: () => void;
 }
 
