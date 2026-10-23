@@ -3,7 +3,6 @@
 import {
   createContext,
   useCallback,
-  useContext,
   useEffect,
   useEffectEvent,
   useMemo,
@@ -16,7 +15,7 @@ import { useRouter } from "next/navigation";
 
 const SEARCH_DELAY_MS = 350;
 
-interface CatalogContextValue {
+export interface CatalogContextValue {
   query: string;
   categoryId: number | null;
   isPending: boolean;
@@ -29,7 +28,7 @@ interface CatalogContextValue {
   leaveCatalog: () => void;
 }
 
-const CatalogContext = createContext<CatalogContextValue | null>(null);
+export const CatalogContext = createContext<CatalogContextValue | null>(null);
 
 export function CatalogProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -108,10 +107,4 @@ export function CatalogProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>;
-}
-
-export function useCatalog(): CatalogContextValue {
-  const context = useContext(CatalogContext);
-  if (!context) throw new Error("useCatalog must be used inside <CatalogProvider>");
-  return context;
 }

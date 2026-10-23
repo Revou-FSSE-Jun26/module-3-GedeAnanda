@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useReducer, useState } from "react";
+import { createContext, useCallback, useMemo, useReducer, useState } from "react";
 import type { CartItem } from "@/lib/types";
 
 type CartAction =
@@ -35,7 +35,7 @@ function cartReducer(state: CartItem[], action: CartAction): CartItem[] {
   }
 }
 
-interface CartContextValue {
+export interface CartContextValue {
   items: CartItem[];
   itemCount: number;
   total: number;
@@ -50,7 +50,7 @@ interface CartContextValue {
   dismissLastAdded: () => void;
 }
 
-const CartContext = createContext<CartContextValue | null>(null);
+export const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, dispatch] = useReducer(cartReducer, []);
@@ -86,10 +86,4 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-}
-
-export function useCart(): CartContextValue {
-  const context = useContext(CartContext);
-  if (!context) throw new Error("useCart must be used inside <CartProvider>");
-  return context;
 }

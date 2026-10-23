@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import QuantityCounter from "./QuantityCounter";
-import { useCart } from "./CartProvider";
+import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/format";
 
 interface AddToCartPanelProps {

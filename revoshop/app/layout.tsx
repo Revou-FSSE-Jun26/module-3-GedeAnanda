@@ -6,8 +6,8 @@ import BottomNav from "@/components/BottomNav";
 import CartDrawer from "@/components/CartDrawer";
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { CartProvider } from "@/components/CartProvider";
-import { CatalogProvider } from "@/components/CatalogProvider";
+import { CartProvider } from "@/context/CartContext";
+import { CatalogProvider } from "@/context/CatalogContext";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({

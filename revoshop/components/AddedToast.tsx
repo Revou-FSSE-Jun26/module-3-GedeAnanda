@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import { CheckCircle } from "@phosphor-icons/react";
-import { useCart } from "./CartProvider";
+import { useCart } from "@/hooks/useCart";
 
 const VISIBLE_MS = 3500;
 

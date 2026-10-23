@@ -1,6 +1,6 @@
 "use client";
 
-import { useCatalog } from "./CatalogProvider";
+import { useCatalog } from "@/hooks/useCatalog";
 import type { Category } from "@/lib/types";
 
 export default function CategoryFilter({ categories }: { categories: Category[] }) {

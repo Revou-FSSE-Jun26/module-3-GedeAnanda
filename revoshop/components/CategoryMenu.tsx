@@ -1,7 +1,7 @@
 "use client";
 
 import Card from "./Card";
-import { useCatalog } from "./CatalogProvider";
+import { useCatalog } from "@/hooks/useCatalog";
 import type { Category } from "@/lib/types";
 
 interface CategoryMenuProps {

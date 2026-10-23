@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import CartSummary from "./CartSummary";
-import { useCart } from "./CartProvider";
+import { useCart } from "@/hooks/useCart";
 
 export default function CartDrawer() {
   const { isOpen, closeCart } = useCart();

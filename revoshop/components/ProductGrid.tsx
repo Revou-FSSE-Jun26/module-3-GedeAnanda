@@ -7,7 +7,7 @@ import AddProductForm from "./AddProductForm";
 import Card from "./Card";
 import CategoryFilter from "./CategoryFilter";
 import ProductCard from "./ProductCard";
-import { useCatalog } from "./CatalogProvider";
+import { useCatalog } from "@/hooks/useCatalog";
 import { pluralize } from "@/lib/format";
 import { getProductImage } from "@/lib/images";
 import type { Category, Product } from "@/lib/types";

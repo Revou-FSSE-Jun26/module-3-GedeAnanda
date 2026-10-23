@@ -3,7 +3,7 @@
 import type { FormEvent } from "react";
 import { MagnifyingGlass } from "@phosphor-icons/react";
 import SearchBar from "./SearchBar";
-import { useCatalog } from "./CatalogProvider";
+import { useCatalog } from "@/hooks/useCatalog";
 
 export default function HeaderSearch() {
   const { query, setQuery, submitSearch, isPending } = useCatalog();

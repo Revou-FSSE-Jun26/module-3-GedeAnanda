@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { House, Receipt, ShoppingCartSimple, SquaresFour, Storefront, type Icon } from "@phosphor-icons/react";
-import { useCart } from "./CartProvider";
+import { useCart } from "@/hooks/useCart";
 import { isActivePath } from "./NavLinks";
 
 const items: { href: string; label: string; icon: Icon }[] = [

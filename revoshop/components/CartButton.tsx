@@ -1,7 +1,7 @@
 "use client";
 
 import { ShoppingCartSimple } from "@phosphor-icons/react";
-import { useCart } from "./CartProvider";
+import { useCart } from "@/hooks/useCart";
 
 export default function CartButton() {
   const { itemCount, openCart } = useCart();

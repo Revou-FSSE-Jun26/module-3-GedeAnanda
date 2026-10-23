@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Trash, X } from "@phosphor-icons/react";
 import QuantityCounter from "./QuantityCounter";
-import { useCart } from "./CartProvider";
+import { useCart } from "@/hooks/useCart";
 import { formatPrice, pluralize } from "@/lib/format";
 
 export default function CartSummary({ onClose }: { onClose: () => void }) {

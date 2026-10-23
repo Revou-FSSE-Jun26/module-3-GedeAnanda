@@ -6,7 +6,7 @@ import Card from "./Card";
 import ProductImage from "./ProductImage";
 import QuantityCounter from "./QuantityCounter";
 import StockLabel from "./StockLabel";
-import { useCart } from "./CartProvider";
+import { useCart } from "@/hooks/useCart";
 import { formatPrice } from "@/lib/format";
 
 export interface ProductCardProps {
