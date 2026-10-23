@@ -1,9 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { Plus } from "@phosphor-icons/react";
-import AddProductForm from "./AddProductForm";
 import Card from "./Card";
 import CategoryFilter from "./CategoryFilter";
 import ProductCard from "./ProductCard";
@@ -36,9 +34,6 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
   const { query, categoryId, isPending, syncFromUrl, leaveCatalog, clearFilters } = useCatalog();
   const [sort, setSort] = useState<SortKey>("relevance");
   const [inStockOnly, setInStockOnly] = useState(false);
-  const [addedProducts, setAddedProducts] = useState<Product[]>([]);
-  const [notice, setNotice] = useState<string | null>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
   const urlSearch = searchParams.get("search") ?? "";
   const urlCategory = parseCategory(searchParams.get("category"));
@@ -56,7 +51,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
   );
 
   const normalizedQuery = query.trim().toLowerCase();
-  const visibleProducts = [...products, ...addedProducts]
+  const visibleProducts = products
     .filter(
       (product) =>
         (categoryId === null || product.category_id === categoryId) &&
@@ -68,12 +63,6 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
   const categoryName = categoryId ? categoryNames.get(categoryId) : undefined;
   const heading = normalizedQuery ? `Results for "${query.trim()}"` : (categoryName ?? "All products");
   const hasFilters = Boolean(normalizedQuery || categoryId || inStockOnly);
-
-  function handleAddProduct(product: Product) {
-    setAddedProducts((current) => [...current, product]);
-    dialogRef.current?.close();
-    setNotice(`"${product.name}" was added to the end of the list.`);
-  }
 
   function handleClearFilters() {
     setInStockOnly(false);
@@ -91,14 +80,6 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
             {isPending && <span className="text-subtle">, updating</span>}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => dialogRef.current?.showModal()}
-          className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-accent px-3 text-sm font-semibold text-accent transition-colors duration-150 hover:bg-accent-soft"
-        >
-          <Plus size={16} weight="bold" aria-hidden />
-          Add product
-        </button>
       </div>
 
       <div className="lg:hidden">
@@ -130,22 +111,6 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
         </label>
       </div>
 
-      {notice && (
-        <p
-          role="status"
-          className="flex items-center justify-between gap-3 rounded-lg bg-success-soft px-3 py-2 text-sm text-success"
-        >
-          {notice}
-          <button
-            type="button"
-            onClick={() => setNotice(null)}
-            className="shrink-0 font-semibold underline-offset-2 hover:underline"
-          >
-            Dismiss
-          </button>
-        </p>
-      )}
-
       {visibleProducts.length > 0 ? (
         <ul
           aria-busy={isPending}
@@ -165,8 +130,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
                 categoryName={
                   product.category_id !== null ? categoryNames.get(product.category_id) : undefined
                 }
-                href={product.id > 0 ? `/products/${product.id}` : undefined}
-                isNew={product.id < 0}
+                href={`/products/${product.id}`}
                 priority={index < 4}
               />
             </li>
@@ -178,7 +142,7 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
           <p className="mx-auto mt-1 max-w-sm text-sm text-muted">
             {hasFilters
               ? "Try another keyword, a different category, or include sold out items."
-              : "The catalog is empty. Add a product to get started."}
+              : "The catalog is empty right now. Check back soon."}
           </p>
           {hasFilters && (
             <button
@@ -192,19 +156,6 @@ export default function ProductGrid({ products, categories }: ProductGridProps) 
         </Card>
       )}
 
-      <dialog
-        ref={dialogRef}
-        onClick={(event) => {
-          if (event.target === event.currentTarget) dialogRef.current?.close();
-        }}
-        className="m-auto w-[calc(100%-2rem)] max-w-lg rounded-lg bg-surface p-0 text-ink shadow-lift"
-      >
-        <AddProductForm
-          categories={categories}
-          onAddProduct={handleAddProduct}
-          onCancel={() => dialogRef.current?.close()}
-        />
-      </dialog>
     </div>
   );
 }

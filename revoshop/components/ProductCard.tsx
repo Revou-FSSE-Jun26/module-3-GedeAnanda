@@ -18,7 +18,6 @@ export interface ProductCardProps {
   categoryName?: string;
   href?: string;
   isActive?: boolean;
-  isNew?: boolean;
   priority?: boolean;
 }
 
@@ -31,7 +30,6 @@ export default function ProductCard({
   categoryName = "Uncategorized",
   href,
   isActive = true,
-  isNew = false,
   priority = false,
 }: ProductCardProps) {
   const [quantity, setQuantity] = useState(1);
@@ -80,11 +78,6 @@ export default function ProductCard({
           <span aria-hidden>&middot;</span>
           <StockLabel stock={stock} isActive={isActive} />
         </p>
-        {isNew && (
-          <span className="mt-1.5 self-start rounded bg-accent-soft px-1.5 py-0.5 text-[11px] font-semibold text-on-accent-soft">
-            Added by you
-          </span>
-        )}
 
         <div className="mt-auto flex items-center gap-2 pt-3">
           {inStock && <QuantityCounter size="sm" value={quantity} onChange={setQuantity} max={stock} />}

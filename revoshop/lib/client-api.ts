@@ -1,6 +1,6 @@
 import { ApiError, request } from "./http";
 import { sessionStore } from "./session";
-import type { Order, Session, User } from "./types";
+import type { Category, Order, Product, Session, User } from "./types";
 
 // Browser only
 
@@ -94,4 +94,53 @@ export async function getOrder(id: number): Promise<Order | null> {
     if (error instanceof ApiError && error.status === 404) return null;
     throw error;
   }
+}
+
+// Admin only
+
+export async function getUsers(): Promise<User[]> {
+  const res = await authRequest<User[]>("/users?per_page=100");
+  return res.data;
+}
+
+export interface ProductInput {
+  name: string;
+  price: number;
+  stock: number;
+  category_id: number;
+  description: string | null;
+  is_active: boolean;
+}
+
+export async function createProduct(input: ProductInput): Promise<Product> {
+  const res = await authRequest<Product>("/products", "POST", input);
+  return res.data;
+}
+
+export async function updateProduct(id: number, input: ProductInput): Promise<Product> {
+  const res = await authRequest<Product>(`/products/${id}`, "PUT", input);
+  return res.data;
+}
+
+export async function deleteProduct(id: number): Promise<void> {
+  await authRequest(`/products/${id}`, "DELETE");
+}
+
+export interface CategoryInput {
+  name: string;
+  description: string | null;
+}
+
+export async function createCategory(input: CategoryInput): Promise<Category> {
+  const res = await authRequest<Category>("/categories", "POST", input);
+  return res.data;
+}
+
+export async function updateCategory(id: number, input: CategoryInput): Promise<Category> {
+  const res = await authRequest<Category>(`/categories/${id}`, "PUT", input);
+  return res.data;
+}
+
+export async function deleteCategory(id: number): Promise<void> {
+  await authRequest(`/categories/${id}`, "DELETE");
 }
