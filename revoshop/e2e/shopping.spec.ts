@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 import {
-  API_URL,
-  apiToken,
+  cancelPendingOrders,
   expectPath,
   formatPrice,
   getProducts,
@@ -10,6 +9,15 @@ import {
   registerViaApi,
   waitForGuestHeader,
 } from "./helpers";
+
+let customer: ReturnType<typeof newCustomer> | null = null;
+
+// Runs even after a failure
+test.afterEach(async ({ request }) => {
+  if (!customer) return;
+  await cancelPendingOrders(request, customer.email, customer.password);
+  customer = null;
+});
 
 test("header search filters while typing from any page", async ({ page }) => {
   await page.goto("/");
@@ -37,6 +45,7 @@ test("browse products, add to cart, check out, and see the order", async ({ page
 
   const user = newCustomer();
   await registerViaApi(request, user);
+  customer = user;
   await loginViaUi(page, user.email, user.password);
   await expectPath(page, "/");
 
@@ -73,11 +82,4 @@ test("browse products, add to cart, check out, and see the order", async ({ page
   await orderLink.click();
   await expect(page.getByRole("heading", { name: `Order #${orderId}` })).toBeVisible();
   await expect(page.getByRole("link", { name: product.name })).toBeVisible();
-
-  // Restore stock
-  const token = await apiToken(request, user.email, user.password);
-  const cancel = await request.post(`${API_URL}/orders/${orderId}/cancel`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  expect(cancel.ok()).toBeTruthy();
 });

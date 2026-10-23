@@ -8,11 +8,17 @@ import {
   formatPrice,
   getProducts,
   loginViaUi,
+  removeTestData,
   uniqueId,
 } from "./helpers";
 
 test.describe("Admin dashboard", () => {
   test.skip(!ADMIN_EMAIL || !ADMIN_PASSWORD, "Set E2E_ADMIN_EMAIL and E2E_ADMIN_PASSWORD in .env.local");
+
+  // Runs even after a failure
+  test.afterAll(async ({ request }) => {
+    await removeTestData(request, await apiToken(request, ADMIN_EMAIL, ADMIN_PASSWORD));
+  });
 
   test.beforeEach(async ({ page }) => {
     await loginViaUi(page, ADMIN_EMAIL, ADMIN_PASSWORD);

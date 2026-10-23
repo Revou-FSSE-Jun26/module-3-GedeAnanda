@@ -63,3 +63,24 @@ export async function getProducts(request: APIRequestContext): Promise<ApiProduc
   expect(res.ok()).toBeTruthy();
   return (await res.json()).data;
 }
+
+// Leftovers from failed runs
+export async function removeTestData(request: APIRequestContext, token: string) {
+  const headers = { Authorization: `Bearer ${token}` };
+  for (const product of await getProducts(request)) {
+    if (product.name.startsWith("E2E ")) await request.delete(`${API_URL}/products/${product.id}`, { headers });
+  }
+  const categories: { id: number; name: string }[] = (await (await request.get(`${API_URL}/categories`)).json()).data;
+  for (const category of categories) {
+    if (category.name.startsWith("E2E ")) await request.delete(`${API_URL}/categories/${category.id}`, { headers });
+  }
+}
+
+// Restore stock
+export async function cancelPendingOrders(request: APIRequestContext, email: string, password: string) {
+  const headers = { Authorization: `Bearer ${await apiToken(request, email, password)}` };
+  const orders: { id: number; status: string }[] = (await (await request.get(`${API_URL}/orders`, { headers })).json()).data;
+  for (const order of orders) {
+    if (order.status === "pending") await request.post(`${API_URL}/orders/${order.id}/cancel`, { headers });
+  }
+}
